@@ -1,7 +1,7 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using OdevSistemi.Server.Data;
+using OdevSistemi.Server.Entities;
 using OdevSistemi.Server.Hubs;
 using OdevSistemi.Shared.Contracts;
 
@@ -21,26 +21,37 @@ public class ExamBroadcaster
 
     public async Task<StudentExamDto> BroadcastExam(int examId)
     {
-        var exam = await _db.Exams
-            .Include(e => e.ExamQuestions).ThenInclude(eq => eq.Question)
-            .AsNoTracking()
+        if (_session.ActivePayload is { } running && DateTime.UtcNow < running.EndUtc)
+            throw new InvalidOperationException("Şu anda devam eden bir sınav var. Önce onu bitirin.");
+
+        Exam exam = await _db.Exams
+            .Include(e => e.Questions).ThenInclude(eq => eq.Question)
             .FirstOrDefaultAsync(e => e.Id == examId)
             ?? throw new InvalidOperationException("Sınav bulunamadı.");
+
+        if (exam.StartedAt is not null)
+            throw new InvalidOperationException("Bu sınav daha önce başlatılmış. Tekrar uygulamak için yeni bir sınav oluşturun.");
+        if (exam.Questions.Count == 0)
+            throw new InvalidOperationException("Sınavda hiç soru yok.");
 
         var start = DateTime.UtcNow;
         var end = start.AddMinutes(exam.DurationMinutes); // bitiş saati SUNUCUDA hesaplanır
 
-        // ÖNEMLİ: CorrectAnswer ve Keywords burada KOPYALANMIYOR -> öğrenciye hiç gitmiyor.
-        var questions = exam.ExamQuestions
-            .OrderBy(eq => eq.Order)
+        // Veritabanına da yaz: sınav listesinde "Devam ediyor" görünsün, başlamış sınav düzenlenemesin.
+        exam.StartedAt = start;
+        exam.EndsAt = end;
+        await _db.SaveChangesAsync();
+
+        // ÖNEMLİ: CorrectAnswer burada KOPYALANMIYOR -> öğrenciye hiç gitmiyor.
+        var questions = exam.Questions
+            .OrderBy(eq => eq.OrderNo)
             .Select(eq => new StudentQuestionDto(
-                eq.Question.Id,
+                eq.Question!.Id,
                 eq.Question.Text,
                 eq.Question.Type,
-                eq.Question.OptionsJson is null ? null
-                    : JsonSerializer.Deserialize<List<string>>(eq.Question.OptionsJson),
-                eq.Question.Points,
-                eq.Order))
+                eq.Question.Options.Count > 0 ? eq.Question.Options.ToList() : null,
+                eq.Points,              // puan sınava özel
+                eq.OrderNo))
             .ToList();
 
         var payload = new StudentExamDto(exam.Id, exam.Title, start, end, questions);
@@ -53,7 +64,7 @@ public class ExamBroadcaster
 
     public async Task StopExam()
     {
-        _session.StopExam();
-        await _hub.Clients.Group(ExamHub.StudentsGroup).SendAsync(HubEvents.ExamEnded);
+        int? examId = _session.ActivePayload?.ExamId;
+        _session.StopExam();        await _hub.Clients.Group(ExamHub.StudentsGroup).SendAsync(HubEvents.ExamEnded);
     }
 }

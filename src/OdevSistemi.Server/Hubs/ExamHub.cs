@@ -1,5 +1,6 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using OdevSistemi.Server.Security;
 using OdevSistemi.Server.Services;
 using OdevSistemi.Shared.Contracts;
 
@@ -7,8 +8,10 @@ namespace OdevSistemi.Server.Hubs;
 
 /// <summary>
 /// Vize İsteri 2 + 6: öğrenci bağlantıları, kopma yönetimi ve cevap gönderimi.
-/// İstemciler şu adrese bağlanır: http://EGITMEN_IP:{ServerInfo.Port}{ServerInfo.HubPath}
+/// İstemciler şu adrese bağlanır: http://EGITMEN_IP:{ServerInfo.Port}{ServerInfo.HubPath}?access_token=TOKEN
+/// Token olmadan bağlanılamaz ([Authorize]).
 /// </summary>
+[Authorize]
 public class ExamHub : Hub
 {
     public const string StudentsGroup = "Students";
@@ -17,19 +20,24 @@ public class ExamHub : Hub
     private readonly ExamSessionManager _session;
     private readonly GradingService _grading;
     private readonly SubmissionLogger _logger;
-    private readonly IConfiguration _config;
 
-    public ExamHub(ExamSessionManager session, GradingService grading, SubmissionLogger logger, IConfiguration config)
+    public ExamHub(ExamSessionManager session, GradingService grading, SubmissionLogger logger)
     {
-        _session = session; _grading = grading; _logger = logger; _config = config;
+        _session = session; _grading = grading; _logger = logger;
     }
 
     private string? ClientIp => Context.GetHttpContext()?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
 
-    // ---------- Öğrenci giriş yaptıktan sonra çağırır ----------
-    // NOT: Kişi 1'in JWT'si gelince studentId/studentName parametre yerine Context.User claim'lerinden okunacak.
-    public async Task RegisterStudent(int studentId, string studentName)
+    // ---------- Öğrenci bağlandıktan sonra çağırır ----------
+    // Kimlik istemciden alınmıyor, giriş token'ından okunuyor: kimse başkası adına bağlanamaz.
+    public async Task RegisterStudent()
     {
+        if (!Context.User!.IsInRole("Student"))
+            throw new HubException("Bu işlem sadece öğrenciler içindir.");
+
+        int studentId = int.Parse(Context.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        string studentName = Context.User.FindFirstValue("full_name") ?? Context.User.Identity?.Name ?? "";
+
         var s = new ConnectedStudentDto(Context.ConnectionId, studentId, studentName, ClientIp, DateTime.UtcNow);
         _session.AddStudent(s);
         await Groups.AddToGroupAsync(Context.ConnectionId, StudentsGroup);
@@ -43,10 +51,10 @@ public class ExamHub : Hub
     }
 
     // ---------- Eğitmen arayüzü bağlanınca çağırır ----------
-    public async Task RegisterInstructor(string instructorKey)
+    public async Task RegisterInstructor()
     {
-        // Geçici koruma: öğrenciler eğitmen grubuna girip canlı sonuçları izleyemesin
-        if (!InstructorKeyAttribute.IsValid(_config, instructorKey))
+        // Öğrenciler eğitmen grubuna girip canlı sonuçları izleyemesin
+        if (!Context.User!.IsInRole("Instructor"))
             throw new HubException("Yetkisiz.");
 
         await Groups.AddToGroupAsync(Context.ConnectionId, InstructorsGroup);
@@ -80,7 +88,7 @@ public class ExamHub : Hub
 
             // Eğitmen ekranı canlı güncellensin
             await Clients.Group(InstructorsGroup).SendAsync(HubEvents.SubmissionReceived,
-                new SubmissionNoticeDto(me.StudentId, me.StudentName, dto.ExamId, result.TotalScore, result.MaxScore, sub.SubmittedAtUtc));
+                new SubmissionNoticeDto(me.StudentId, me.StudentName, dto.ExamId, result.TotalScore, result.MaxScore, sub.SubmittedAt));
 
             return new SubmitResultDto(true, "Cevaplarınız alındı.", result.TotalScore, result.MaxScore);
         }

@@ -1,9 +1,9 @@
+using OdevSistemi.Shared;
 namespace OdevSistemi.Shared.Contracts;
 
 // Sunucu + öğrenci arayüzü + eğitmen arayüzü AYNI sınıfları kullanır.
 // Bir alanı değiştirirseniz üç proje birden güncellenmiş olur.
 
-public enum QuestionType { MultipleChoice = 0, Classic = 1 }
 
 // Öğrenciye giden soru: CorrectAnswer ve Keywords YOK (cevap sızmasın diye)
 public record StudentQuestionDto(int Id, string Text, QuestionType Type, List<string>? Options, double Points, int Order);
