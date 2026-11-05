@@ -56,7 +56,7 @@ public partial class SonuclarView : UserControl
             EnDusuk.Text = sonuclar.Min(s => s.Puan).ToString("0.#");
         }
 
-        DurumMetni.Text = $"{sinav.Ad}  •  {sinav.Sorular.Count} soru  •  {sinav.SureDakika} dk  " +
+        DurumMetni.Text = $"{sinav.Ad}  •  {sinav.SoruSayisi} soru  •  {sinav.SureDakika} dk  " +
                           $"•  Son güncelleme {DateTime.Now:HH:mm:ss}";
     }
 
