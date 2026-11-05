@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OdevSistemi.InstructorUI.Views.SinavOlusturView">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Sınav Oluştur ve Dağıt" FontSize="24"
+                   FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <Grid ColumnDefinitions="*,20,340">
+            <!-- SOL: Soru seçimi -->
+            <DockPanel Grid.Column="0">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,10">
+                    <TextBlock Text="Kategori:" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="KategoriFiltresi" Width="200"
+                              SelectionChanged="KategoriFiltresi_SelectionChanged"/>
+                    <Button Content="Görünenleri Seç / Kaldır" Click="TumunuSec_Click"/>
+                </StackPanel>
+
+                <Border DockPanel.Dock="Top" Background="#F1F5F9" Padding="6">
+                    <Grid ColumnDefinitions="40,*,130,130,100">
+                        <TextBlock Grid.Column="1" Text="Soru" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2" Text="Tür" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="3" Text="Kategori" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="4" Text="Puan" FontWeight="SemiBold"/>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer>
+                    <ItemsControl x:Name="SoruListesi">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="6">
+                                    <Grid ColumnDefinitions="40,*,130,130,100">
+                                        <CheckBox IsChecked="{Binding Secili}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Soru.Metin}"
+                                                   TextTrimming="CharacterEllipsis" VerticalAlignment="Center"
+                                                   ToolTip.Tip="{Binding Soru.Metin}" Margin="0,0,8,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Soru.TurAdi}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Soru.Kategori}" VerticalAlignment="Center"/>
+                                        <NumericUpDown Grid.Column="4" Value="{Binding Puan}" Minimum="1" Maximum="100"
+                                                       Increment="1" FormatString="0" IsEnabled="{Binding Secili}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+
+            <!-- SAĞ: Sınav bilgileri, öğrenciler, gönder -->
+            <StackPanel Grid.Column="2" Spacing="8">
+                <TextBlock Text="Sınav Bilgileri" FontSize="16" FontWeight="Bold"/>
+                <TextBox x:Name="SinavAdiKutusu" Watermark="Sınav adı (ör. Lab 3 Quiz)"/>
+                <TextBlock Text="Süre (dakika)"/>
+                <NumericUpDown x:Name="SureKutusu" Minimum="1" Maximum="300" Value="30"
+                               Increment="5" FormatString="0"/>
+                <TextBlock x:Name="OzetMetni" FontWeight="SemiBold" Margin="0,4,0,0"/>
+
+                <Separator Margin="0,8"/>
+
+                <TextBlock x:Name="OgrenciBasligi" Text="Bağlı Öğrenciler (0)" FontSize="16" FontWeight="Bold"/>
+                <ListBox x:Name="OgrenciListesi" Height="220">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding AdSoyad}" FontWeight="SemiBold"/>
+                                <TextBlock FontSize="12" Foreground="Gray">
+                                    <Run Text="{Binding OgrenciNo}"/>
+                                    <Run Text="  •  "/>
+                                    <Run Text="{Binding IpAdresi}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <TextBlock x:Name="SonGuncelleme" FontSize="12" Foreground="Gray"/>
+
+                <Button x:Name="GonderButonu" Classes="accent" Content="Sınavı Tüm Öğrencilere Gönder"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        Padding="0,10" Margin="0,8,0,0" Click="Gonder_Click"/>
+                <TextBlock x:Name="DurumMetni" TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>
