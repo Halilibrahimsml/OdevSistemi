@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OdevSistemi.InstructorUI.Views.LoginWindow"
+        Title="Eğitmen Girişi" Width="380" Height="330"
+        WindowStartupLocation="CenterScreen" CanResize="False">
+    <StackPanel Margin="32" Spacing="12" VerticalAlignment="Center">
+        <TextBlock Text="Eğitmen Girişi" FontSize="22" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+        <TextBox x:Name="KullaniciAdiKutusu" Watermark="Kullanıcı adı"/>
+        <TextBox x:Name="SifreKutusu" Watermark="Şifre" PasswordChar="●"/>
+        <TextBlock x:Name="HataMesaji" Foreground="IndianRed" IsVisible="False" TextWrapping="Wrap"/>
+        <Button Content="Giriş Yap" IsDefault="True" Click="GirisYap_Click"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+    </StackPanel>
+</Window>
