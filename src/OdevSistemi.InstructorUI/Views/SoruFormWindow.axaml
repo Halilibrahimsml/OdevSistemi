@@ -49,8 +49,7 @@
         </StackPanel>
 
         <StackPanel x:Name="KlasikPaneli" Spacing="6" IsVisible="False">
-            <TextBlock Text="Cevap anahtarı (anahtar kelimeleri virgülle ayırın)"/>
-            <TextBox x:Name="CevapAnahtariKutusu" AcceptsReturn="True" TextWrapping="Wrap" Height="70"/>
+<TextBlock Text="Kabul edilen cevaplar (birden fazlaysa | ile ayırın, ör: printf|printf())"/>            <TextBox x:Name="CevapAnahtariKutusu" AcceptsReturn="True" TextWrapping="Wrap" Height="70"/>
         </StackPanel>
 
         <TextBlock x:Name="HataMesaji" Foreground="IndianRed" IsVisible="False" TextWrapping="Wrap"/>

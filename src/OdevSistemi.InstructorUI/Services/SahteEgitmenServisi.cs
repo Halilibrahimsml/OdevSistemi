@@ -51,6 +51,8 @@ public class SahteEgitmenServisi : IEgitmenServisi
     public Task<Sinav> SinavOlusturAsync(Sinav sinav)
     {
         sinav.Id = _sonrakiSinavId++;
+        sinav.SoruSayisi = sinav.Sorular.Count;
+        sinav.Durum = "Hazır";
         _sinavlar.Add(sinav);
         return Task.FromResult(sinav);
     }
@@ -74,28 +76,26 @@ public class SahteEgitmenServisi : IEgitmenServisi
     public Task SinavGonderAsync(int sinavId)
     {
         var s = _sinavlar.First(x => x.Id == sinavId);
+        s.Durum = "Devam ediyor";
         _sistemLogu.Add($"[{Zaman()}] '{s.Ad}' sınavı gönderildi ({s.Sorular.Count} soru, {s.SureDakika} dk)");
         return Task.CompletedTask;
     }
 
-    public Task<List<SinavSonucu>> SonuclariGetirAsync(int sinavId)
+        public Task<List<SinavSonucu>> SonuclariGetirAsync(int sinavId)
     {
         var sinav = _sinavlar.FirstOrDefault(x => x.Id == sinavId);
-        int toplamSoru = sinav?.Sorular.Count ?? 0;
         int toplamPuan = sinav?.Sorular.Sum(x => x.Puan) ?? 0;
 
-        var sonuc = new List<SinavSonucu>();
-        foreach (var o in BagliOgrencileriGetirAsync().Result)
+        var sonuc = BagliOgrencileriGetirAsync().Result.Select(o => new SinavSonucu
         {
-            var dogrular = sinav?.Sorular.Where(_ => _r.Next(2) == 0).ToList() ?? new();
-            sonuc.Add(new SinavSonucu
-            {
-                OgrenciNo = o.OgrenciNo, AdSoyad = o.AdSoyad,
-                DogruSayisi = dogrular.Count, ToplamSoru = toplamSoru,
-                Puan = toplamPuan == 0 ? 0 : Math.Round(100.0 * dogrular.Sum(x => x.Puan) / toplamPuan, 1),
-                TeslimZamani = DateTime.Now.AddMinutes(-_r.Next(0, 30)),
-            });
-        }
+            OgrenciNo = o.OgrenciNo,
+            AdSoyad = o.AdSoyad,
+            Puan = sinav?.Sorular.Where(_ => _r.Next(2) == 0).Sum(x => x.Puan) ?? 0,
+            MaxPuan = toplamPuan,
+            IpAdresi = o.IpAdresi,
+            TeslimZamani = DateTime.Now.AddMinutes(-_r.Next(0, 30)),
+        }).ToList();
+
         return Task.FromResult(sonuc);
     }
 

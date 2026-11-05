@@ -1,3 +1,6 @@
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using OdevSistemi.InstructorUI.Services;
@@ -30,9 +33,13 @@ public partial class LoginWindow : Window
             new MainWindow(kullaniciAdi).Show();
             Close();
         }
-        catch
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
             HataGoster("Sunucuya bağlanılamadı. Sunucunun çalıştığından emin olun.");
+        }
+        catch (Exception ex)
+        {
+            HataGoster(ex.Message);
         }
         finally
         {

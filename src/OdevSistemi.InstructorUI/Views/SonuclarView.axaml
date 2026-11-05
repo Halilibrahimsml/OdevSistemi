@@ -67,13 +67,14 @@
                 <DataGrid x:Name="SonucTablosu" IsReadOnly="True" AutoGenerateColumns="False"
                           GridLinesVisibility="Horizontal">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Öğrenci No" Binding="{Binding OgrenciNo}"  Width="130"/>
-                        <DataGridTextColumn Header="Ad Soyad"   Binding="{Binding AdSoyad}"    Width="*"/>
-                        <DataGridTextColumn Header="Doğru"      Binding="{Binding DogruOrani}" Width="90"/>
-                        <DataGridTextColumn Header="Puan"       Binding="{Binding Puan}"       Width="90"/>
+                        <DataGridTextColumn Header="Öğrenci ID" Binding="{Binding OgrenciNo}" Width="100"/>
+                        <DataGridTextColumn Header="Ad Soyad"   Binding="{Binding AdSoyad}"   Width="*"/>
+                        <DataGridTextColumn Header="Puan"       Binding="{Binding PuanMetni}" Width="110"/>
+                        <DataGridTextColumn Header="Başarı %"   Binding="{Binding Yuzde}"     Width="90"/>
+                        <DataGridTextColumn Header="IP"         Binding="{Binding IpAdresi}"  Width="130"/>
                         <DataGridTextColumn Header="Teslim Zamanı"
-                                            Binding="{Binding TeslimZamani, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}"
-                                            Width="180"/>
+                    Binding="{Binding TeslimZamani, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}"
+                    Width="170"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>

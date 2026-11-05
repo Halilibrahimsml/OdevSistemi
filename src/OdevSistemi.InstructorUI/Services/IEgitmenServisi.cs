@@ -30,6 +30,7 @@ public interface IEgitmenServisi
 
 public static class Servis
 {
-    // Bağlama gününde: new ApiEgitmenServisi("http://localhost:5000")
-    public static IEgitmenServisi Aktif { get; set; } = new SahteEgitmenServisi();
+    // Sunucu olmadan denemek için: new SahteEgitmenServisi()
+    public static IEgitmenServisi Aktif { get; set; } =
+        new ApiEgitmenServisi($"http://localhost:{OdevSistemi.Shared.ServerInfo.Port}");
 }

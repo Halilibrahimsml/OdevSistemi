@@ -32,7 +32,11 @@ public class Sinav
     public int SureDakika { get; set; }
     public List<SinavSorusu> Sorular { get; set; } = new();
     public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
-    public override string ToString() => $"{Ad}  ({OlusturmaTarihi:dd.MM.yyyy HH:mm})";
+    public int SoruSayisi { get; set; }
+    public string Durum { get; set; } = "";
+
+    public override string ToString() =>
+        $"{Ad}  ({OlusturmaTarihi:dd.MM.yyyy HH:mm})" + (Durum == "" ? "" : $"  •  {Durum}");
 }
 
 public class BagliOgrenci
@@ -47,9 +51,11 @@ public class SinavSonucu
 {
     public string OgrenciNo { get; set; } = "";
     public string AdSoyad { get; set; } = "";
-    public int DogruSayisi { get; set; }
-    public int ToplamSoru { get; set; }
     public double Puan { get; set; }
+    public double MaxPuan { get; set; }
     public DateTime TeslimZamani { get; set; }
-    public string DogruOrani => $"{DogruSayisi}/{ToplamSoru}";
+    public string IpAdresi { get; set; } = "";
+
+    public string PuanMetni => $"{Puan:0.#} / {MaxPuan:0.#}";
+    public double Yuzde => MaxPuan == 0 ? 0 : Math.Round(100 * Puan / MaxPuan, 1);
 }
