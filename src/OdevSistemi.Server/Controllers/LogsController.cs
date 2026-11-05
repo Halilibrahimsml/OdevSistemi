@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using OdevSistemi.Server.Security;
+using Microsoft.AspNetCore.Authorization;
 using OdevSistemi.Server.Services;
 
 namespace OdevSistemi.Server.Controllers;
@@ -7,7 +7,7 @@ namespace OdevSistemi.Server.Controllers;
 /// <summary>Vize İsteri 6 / Hedef 12: log dosyalarını eğitmen arayüzüne sunar.</summary>
 [ApiController]
 [Route("api/logs")]
-[InstructorKey] // Kişi 1 JWT ekleyince: [Authorize(Roles = "Instructor")]
+[Authorize(Roles = "Instructor")]// Kişi 1 JWT ekleyince: [Authorize(Roles = "Instructor")]
 public class LogsController : ControllerBase
 {
     private readonly SubmissionLogger _logger;
