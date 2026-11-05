@@ -27,8 +27,8 @@ public partial class MainWindow : Window
         {
             "soru"  => new SoruBankasiView(),
             "sinav" => new SinavOlusturView(),
-            "sonuc" => new TextBlock { Text = "Sonuçlar (Adım 4)" },
-            "log"   => new TextBlock { Text = "Sistem Logları (Adım 4)" },
+            "sonuc" => new SonuclarView(),
+            "log"   => new LogView(),
             _ => null
         };
 

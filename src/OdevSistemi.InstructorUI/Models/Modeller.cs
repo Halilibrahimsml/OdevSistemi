@@ -32,6 +32,7 @@ public class Sinav
     public int SureDakika { get; set; }
     public List<SinavSorusu> Sorular { get; set; } = new();
     public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
+    public override string ToString() => $"{Ad}  ({OlusturmaTarihi:dd.MM.yyyy HH:mm})";
 }
 
 public class BagliOgrenci
@@ -50,4 +51,5 @@ public class SinavSonucu
     public int ToplamSoru { get; set; }
     public double Puan { get; set; }
     public DateTime TeslimZamani { get; set; }
+    public string DogruOrani => $"{DogruSayisi}/{ToplamSoru}";
 }

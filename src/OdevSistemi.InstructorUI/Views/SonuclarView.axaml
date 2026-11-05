@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OdevSistemi.InstructorUI.Views.SonuclarView">
+    <UserControl.Styles>
+        <Style Selector="Border.kart">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+        </Style>
+        <Style Selector="TextBlock.kartBaslik">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="TextBlock.kartDeger">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Sınav Sonuçları" FontSize="24"
+                   FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+            <TextBlock Text="Sınav:" VerticalAlignment="Center"/>
+            <ComboBox x:Name="SinavSecimi" Width="340"
+                      SelectionChanged="SinavSecimi_SelectionChanged"/>
+            <Button Content="Yenile" Click="Yenile_Click"/>
+        </StackPanel>
+
+        <Grid>
+            <TextBlock x:Name="BosMesaji" IsVisible="False" Foreground="Gray"
+                       Text="Henüz gönderilmiş bir sınav yok. Önce 'Sınav Oluştur' ekranından bir sınav gönderin."
+                       TextWrapping="Wrap"/>
+
+            <DockPanel x:Name="IcerikPaneli">
+                <UniformGrid DockPanel.Dock="Top" Columns="4" Margin="0,0,0,12">
+                    <Border Classes="kart">
+                        <StackPanel>
+                            <TextBlock Classes="kartBaslik" Text="Teslim Eden"/>
+                            <TextBlock Classes="kartDeger" x:Name="TeslimSayisi" Text="-"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Classes="kart">
+                        <StackPanel>
+                            <TextBlock Classes="kartBaslik" Text="Sınıf Ortalaması"/>
+                            <TextBlock Classes="kartDeger" x:Name="Ortalama" Text="-"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Classes="kart">
+                        <StackPanel>
+                            <TextBlock Classes="kartBaslik" Text="En Yüksek"/>
+                            <TextBlock Classes="kartDeger" x:Name="EnYuksek" Text="-"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Classes="kart">
+                        <StackPanel>
+                            <TextBlock Classes="kartBaslik" Text="En Düşük"/>
+                            <TextBlock Classes="kartDeger" x:Name="EnDusuk" Text="-"/>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <TextBlock x:Name="DurumMetni" DockPanel.Dock="Bottom" Foreground="Gray" Margin="0,8,0,0"/>
+
+                <DataGrid x:Name="SonucTablosu" IsReadOnly="True" AutoGenerateColumns="False"
+                          GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Öğrenci No" Binding="{Binding OgrenciNo}"  Width="130"/>
+                        <DataGridTextColumn Header="Ad Soyad"   Binding="{Binding AdSoyad}"    Width="*"/>
+                        <DataGridTextColumn Header="Doğru"      Binding="{Binding DogruOrani}" Width="90"/>
+                        <DataGridTextColumn Header="Puan"       Binding="{Binding Puan}"       Width="90"/>
+                        <DataGridTextColumn Header="Teslim Zamanı"
+                                            Binding="{Binding TeslimZamani, StringFormat='{}{0:dd.MM.yyyy HH:mm:ss}'}"
+                                            Width="180"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>
