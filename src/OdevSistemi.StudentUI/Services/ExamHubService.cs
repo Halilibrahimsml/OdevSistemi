@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace OdevSistemi.StudentUI;
 
-/// <summary>SignalR (ExamHub) bağlantısı: sınav paketini yakalar, bağlantı durumunu bildirir.</summary>
+///SignalR (ExamHub) bağlantısı: sınav paketini yakalar, bağlantı durumunu bildirir.
 public class ExamHubService
 {
     private HubConnection? _conn;
 
     public event Action<ExamPackage>? ExamReceived;
     public event Action? ExamEnded;
-    /// <summary>"connected", "reconnecting" veya "closed"</summary>
+    /// "connected", "reconnecting" veya "closed"
     public event Action<string>? StateChanged;
 
     public async Task ConnectAsync(string baseUrl, string token, int userId, string userName)

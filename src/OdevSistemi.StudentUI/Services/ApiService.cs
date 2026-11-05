@@ -2,13 +2,13 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-
 namespace OdevSistemi.StudentUI;
 
-/// <param name="Status">HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı.</param>
+/// name="Status">HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı.
+
 public record ApiResult(bool Ok, int Status, string? Error = null);
 
-/// <summary>Sunucuyla HTTP üzerinden konuşur: giriş ve cevap gönderme.</summary>
+///Sunucuyla HTTP üzerinden konuşur: giriş ve cevap gönderme.
 public class ApiService
 {
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(10) };

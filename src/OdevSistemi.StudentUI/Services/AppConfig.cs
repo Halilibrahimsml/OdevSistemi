@@ -1,9 +1,5 @@
 namespace OdevSistemi.StudentUI;
 
-/// <summary>
-/// 2. Kişiyle birlikte netleştirilecek ortak ayarlar.
-/// Bir şey değişirse sadece burayı güncellemen yeterli.
-/// </summary>
 public static class AppConfig
 {
     public const int Port = 5000;

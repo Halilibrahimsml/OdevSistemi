@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace OdevSistemi.StudentUI;
 
-/// <summary>Sınav sırasında diske yazılan yedek. Uygulama kapanırsa kaldığı yerden devam edilir.</summary>
+///Sınav sırasında diske yazılan yedek. Uygulama kapanırsa kaldığı yerden devam edilir.
 public class ExamBackupData
 {
     public int UserId { get; set; }
@@ -16,11 +16,11 @@ public class ExamBackupData
     public List<int> Flags { get; set; } = new();
 }
 
-/// <summary>
+
 /// Cevapları bu bilgisayarda küçük bir JSON dosyasına yazar.
 /// Konum: %LocalAppData%\OgrenciSinav\yedek_{kullaniciId}.json
 /// Dosya, sunucu cevapları kabul edince silinir. Hiçbir hata uygulamayı durdurmaz.
-/// </summary>
+
 public static class ExamBackup
 {
     private static readonly string Dir = Path.Combine(
@@ -53,13 +53,13 @@ public static class ExamBackup
         catch { return null; }
     }
 
-    /// <summary>Sunucu cevapları aldı: yedeğe artık gerek yok.</summary>
+    /// Sunucu cevapları aldı: yedeğe artık gerek yok.
     public static void Delete(int userId)
     {
         try { File.Delete(PathFor(userId)); } catch { }
     }
 
-    /// <summary>Sunucu gönderimi kesin olarak reddetti (süre bitmiş vb.): veri kaybolmasın diye dosya yeniden adlandırılır.</summary>
+    /// Sunucu gönderimi kesin olarak reddetti (süre bitmiş vb.): veri kaybolmasın diye dosya yeniden adlandırılır.
     public static void Archive(int userId, int examId)
     {
         try
