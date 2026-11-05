@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OdevSistemi.InstructorUI.Views.SoruBankasiView">
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Soru Bankası" FontSize="24"
+                   FontWeight="Bold" Margin="0,0,0,12"/>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+            <TextBlock Text="Kategori:" VerticalAlignment="Center"/>
+            <ComboBox x:Name="KategoriFiltresi" Width="200"
+                      SelectionChanged="KategoriFiltresi_SelectionChanged"/>
+            <Button Content="+ Yeni Soru" Click="YeniSoru_Click"/>
+            <Button Content="Düzenle" Click="Duzenle_Click"/>
+            <Button Content="Sil" Click="Sil_Click"/>
+        </StackPanel>
+
+        <TextBlock x:Name="DurumMetni" DockPanel.Dock="Bottom" Foreground="Gray" Margin="0,8,0,0"/>
+
+        <DataGrid x:Name="SoruTablosu" IsReadOnly="True" AutoGenerateColumns="False"
+                  SelectionMode="Single" GridLinesVisibility="Horizontal"
+                  DoubleTapped="SoruTablosu_DoubleTapped">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID"       Binding="{Binding Id}"       Width="60"/>
+                <DataGridTextColumn Header="Soru"     Binding="{Binding Metin}"    Width="*"/>
+                <DataGridTextColumn Header="Tür"      Binding="{Binding TurAdi}"   Width="140"/>
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="160"/>
+                <DataGridTextColumn Header="Puan"     Binding="{Binding Puan}"     Width="70"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</UserControl>

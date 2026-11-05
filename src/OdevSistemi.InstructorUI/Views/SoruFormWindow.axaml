@@ -1,0 +1,63 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OdevSistemi.InstructorUI.Views.SoruFormWindow"
+        Title="Yeni Soru" Width="560" SizeToContent="Height"
+        WindowStartupLocation="CenterOwner" CanResize="False">
+    <StackPanel Margin="20" Spacing="10">
+        <TextBlock x:Name="BaslikMetni" Text="Yeni Soru" FontSize="20" FontWeight="Bold"/>
+
+        <TextBlock Text="Soru türü"/>
+        <ComboBox x:Name="TurSecimi" HorizontalAlignment="Stretch"
+                  SelectionChanged="TurSecimi_SelectionChanged">
+            <ComboBoxItem Content="Çoktan Seçmeli"/>
+            <ComboBoxItem Content="Klasik"/>
+        </ComboBox>
+
+        <TextBlock Text="Soru metni"/>
+        <TextBox x:Name="MetinKutusu" AcceptsReturn="True" TextWrapping="Wrap" Height="90"/>
+
+        <Grid ColumnDefinitions="*,12,130">
+            <StackPanel Grid.Column="0" Spacing="4">
+                <TextBlock Text="Kategori (yeni yazabilir ya da listeden seçebilirsiniz)"/>
+                <AutoCompleteBox x:Name="KategoriKutusu" FilterMode="Contains" MinimumPrefixLength="0"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Spacing="4">
+                <TextBlock Text="Puan"/>
+                <NumericUpDown x:Name="PuanKutusu" Minimum="1" Maximum="100"
+                               Value="10" Increment="1" FormatString="0"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel x:Name="SecenekPaneli" Spacing="6">
+            <TextBlock Text="Şıklar (doğru cevabı soldan işaretleyin)"/>
+            <Grid ColumnDefinitions="Auto,*">
+                <RadioButton x:Name="DogruA" GroupName="dogru" Content="A" VerticalAlignment="Center"/>
+                <TextBox x:Name="SecenekA" Grid.Column="1" Watermark="A şıkkı"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*">
+                <RadioButton x:Name="DogruB" GroupName="dogru" Content="B" VerticalAlignment="Center"/>
+                <TextBox x:Name="SecenekB" Grid.Column="1" Watermark="B şıkkı"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*">
+                <RadioButton x:Name="DogruC" GroupName="dogru" Content="C" VerticalAlignment="Center"/>
+                <TextBox x:Name="SecenekC" Grid.Column="1" Watermark="C şıkkı"/>
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*">
+                <RadioButton x:Name="DogruD" GroupName="dogru" Content="D" VerticalAlignment="Center"/>
+                <TextBox x:Name="SecenekD" Grid.Column="1" Watermark="D şıkkı"/>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="KlasikPaneli" Spacing="6" IsVisible="False">
+            <TextBlock Text="Cevap anahtarı (anahtar kelimeleri virgülle ayırın)"/>
+            <TextBox x:Name="CevapAnahtariKutusu" AcceptsReturn="True" TextWrapping="Wrap" Height="70"/>
+        </StackPanel>
+
+        <TextBlock x:Name="HataMesaji" Foreground="IndianRed" IsVisible="False" TextWrapping="Wrap"/>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,6,0,0">
+            <Button Content="Vazgeç" Click="Vazgec_Click"/>
+            <Button Content="Kaydet" Click="Kaydet_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

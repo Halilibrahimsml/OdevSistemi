@@ -25,7 +25,7 @@ public partial class MainWindow : Window
     {
         IcerikAlani.Content = sayfa switch
         {
-            "soru"  => new TextBlock { Text = "Soru Bankası (Adım 2)" },
+            "soru"  => new SoruBankasiView(),
             "sinav" => new TextBlock { Text = "Sınav Oluştur (Adım 3)" },
             "sonuc" => new TextBlock { Text = "Sonuçlar (Adım 4)" },
             "log"   => new TextBlock { Text = "Sistem Logları (Adım 4)" },
