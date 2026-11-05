@@ -13,11 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Sunucu ağdaki tüm bilgisayarlardan erişilebilsin (0.0.0.0 = bütün ağ kartları).
 builder.WebHost.UseUrls($"http://0.0.0.0:{ServerInfo.Port}");
 
-// ---- Veritabanı (SQLite, tek dosya) ----
+// ---- Veritabanı (SQLite, tek dosya) — 1. kişi ----
 string dbPath = Path.Combine(builder.Environment.ContentRootPath, "odevsistemi.db");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 
-// ---- Giriş / JWT ----
+// ---- Giriş / JWT — 1. kişi ----
 JwtSettings jwt = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
                   ?? throw new InvalidOperationException("appsettings.json içinde 'Jwt' ayarı bulunamadı.");
 builder.Services.AddSingleton(jwt);
@@ -40,7 +40,7 @@ builder.Services
             RoleClaimType = ClaimTypes.Role
         };
 
-        // SignalR bağlantısında token, adresin sonunda "?access_token=..." olarak gelir (2. kişi için).
+        // SignalR bağlantısında token, adresin sonunda "?access_token=..." olarak gelir.
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -58,7 +58,19 @@ builder.Services
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(o =>
+{
+    o.MaximumReceiveMessageSize = 1024 * 1024;           // uzun klasik cevaplar için 1 MB
+    o.EnableDetailedErrors = builder.Environment.IsDevelopment();
+    o.ClientTimeoutInterval = TimeSpan.FromSeconds(30);  // 30 sn ses yoksa "koptu" say
+    o.KeepAliveInterval = TimeSpan.FromSeconds(10);
+});
+
+// ---- Ağ, dağıtım, puanlama, log servisleri — 2. kişi ----
+builder.Services.AddSingleton<ExamSessionManager>();  // bağlı öğrenciler + aktif sınav (bellekte)
+builder.Services.AddSingleton<SubmissionLogger>();    // fiziksel .log dosyası
+builder.Services.AddScoped<GradingService>();
+builder.Services.AddScoped<ExamBroadcaster>();
 
 var app = builder.Build();
 
