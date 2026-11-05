@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OdevSistemi.Shared/OdevSistemi.Shared.csproj" />
+    <Project Path="src/OdevSistemi.Server/OdevSistemi.Server.csproj" />
+    <Project Path="src/OdevSistemi.InstructorUI/OdevSistemi.InstructorUI.csproj" />
+    <Project Path="src/OdevSistemi.StudentUI/OdevSistemi.StudentUI.csproj" />
+  </Folder>
+</Solution>
