@@ -1,351 +1,248 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="OdevSistemi.StudentUI.Views.MainWindow"
-        Title="Öğrenci Sınav Sistemi"
-        Width="1180" Height="780" MinWidth="960" MinHeight="660"
-        WindowStartupLocation="CenterScreen"
-        Background="#F3F5FB"
-        FontFamily="Segoe UI, Inter, sans-serif" FontSize="15">
+        Title="Öğrenci Paneli"
+        Width="1150" Height="720" MinWidth="960" MinHeight="640"
+        WindowStartupLocation="CenterScreen">
+
+  
 
   <Window.Styles>
-    <!-- Birincil buton -->
-    <Style Selector="Button.primary">
-      <Setter Property="Background" Value="#4F46E5"/>
+    
+    <Style Selector="Button.menu">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="Background" Value="Transparent"/>
       <Setter Property="Foreground" Value="White"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Padding" Value="24,12"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="Cursor" Value="Hand"/>
-    </Style>
-    <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#4338CA"/>
-      <Setter Property="Foreground" Value="White"/>
-    </Style>
-    <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#3730A3"/>
+      <Setter Property="Padding" Value="12,10"/>
     </Style>
 
-    <!-- Bitir butonu -->
-    <Style Selector="Button.finish">
-      <Setter Property="Background" Value="#059669"/>
+    <!-- Yan panel yazıları -->
+    <Style Selector="TextBlock.panelBaslik">
+      <Setter Property="FontSize" Value="18"/>
+      <Setter Property="FontWeight" Value="Bold"/>
       <Setter Property="Foreground" Value="White"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Padding" Value="24,12"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Margin" Value="4,0,0,2"/>
     </Style>
-    <Style Selector="Button.finish:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#047857"/>
-      <Setter Property="Foreground" Value="White"/>
+    <Style Selector="TextBlock.panelSoluk">
+      <Setter Property="Foreground" Value="#94A3B8"/>
+      <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
 
-    <!-- İkincil buton -->
-    <Style Selector="Button.ghost">
-      <Setter Property="Background" Value="White"/>
-      <Setter Property="Foreground" Value="#1F2937"/>
-      <Setter Property="BorderBrush" Value="#E2E5EE"/>
-      <Setter Property="BorderThickness" Value="1.5"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Padding" Value="22,11"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="Cursor" Value="Hand"/>
-    </Style>
-    <Style Selector="Button.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-      <Setter Property="Background" Value="#EEF2FF"/>
-      <Setter Property="BorderBrush" Value="#4F46E5"/>
-      <Setter Property="Foreground" Value="#4338CA"/>
+    
+    <Style Selector="TextBlock.baslik">
+      <Setter Property="FontSize" Value="24"/>
+      <Setter Property="FontWeight" Value="Bold"/>
     </Style>
 
-    <Style Selector="TextBox">
-      <Setter Property="Padding" Value="14,12"/>
-      <Setter Property="CornerRadius" Value="12"/>
-      <Setter Property="BorderThickness" Value="1.5"/>
-      <Setter Property="BorderBrush" Value="#E2E5EE"/>
-      <Setter Property="Background" Value="#F9FAFC"/>
+    
+    <Style Selector="Border.kart">
+      <Setter Property="Background" Value="#F1F5F9"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding" Value="14"/>
     </Style>
-    <Style Selector="TextBlock.label">
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="FontSize" Value="13"/>
-      <Setter Property="Foreground" Value="#4B5563"/>
-      <Setter Property="Margin" Value="2,4,0,-6"/>
-    </Style>
-    <Style Selector="TextBlock.stat">
-      <Setter Property="FontSize" Value="22"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Foreground" Value="#111827"/>
-    </Style>
-    <Style Selector="TextBlock.statLabel">
+    <Style Selector="TextBlock.kartBaslik">
+      <Setter Property="Foreground" Value="Gray"/>
       <Setter Property="FontSize" Value="12"/>
-      <Setter Property="Foreground" Value="#6B7280"/>
     </Style>
-    <Style Selector="Border.card">
-      <Setter Property="Background" Value="White"/>
-      <Setter Property="CornerRadius" Value="22"/>
-      <Setter Property="BoxShadow" Value="0 18 48 0 #1F312E81"/>
-      <Setter Property="BorderBrush" Value="#EDEFF6"/>
-      <Setter Property="BorderThickness" Value="1"/>
+    <Style Selector="TextBlock.kartDeger">
+      <Setter Property="FontSize" Value="24"/>
+      <Setter Property="FontWeight" Value="Bold"/>
     </Style>
+
   </Window.Styles>
 
   <Grid>
 
-    <!-- 1) GİRİŞ -->
-    <Grid x:Name="LoginPanel" ColumnDefinitions="5*,6*">
-      <Border Grid.Column="0" ClipToBounds="True">
-        <Border.Background>
-          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-            <GradientStop Color="#312E81" Offset="0"/>
-            <GradientStop Color="#4F46E5" Offset="0.6"/>
-            <GradientStop Color="#7C3AED" Offset="1"/>
-          </LinearGradientBrush>
-        </Border.Background>
-        <Grid>
-          <!-- Dekoratif daireler -->
-          <Ellipse Width="380" Height="380" Fill="#14FFFFFF" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-130,-130,0"/>
-          <Ellipse Width="300" Height="300" Fill="#10FFFFFF" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="-110,0,0,-100"/>
+    <!-- ============================ 1) GİRİŞ ============================ -->
+    <Grid x:Name="LoginPanel">
+      <StackPanel Width="360" Spacing="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="Öğrenci Girişi" FontSize="22" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,0,0,8"/>
+        <TextBox x:Name="TxtIp" Watermark="Eğitmen IP adresi (ör. 192.168.1.20)"/>
+        <TextBox x:Name="TxtUser" Watermark="Öğrenci numarası"/>
+        <TextBox x:Name="TxtPass" Watermark="Şifre" PasswordChar="●"/>
+        <TextBlock x:Name="LoginError" Foreground="IndianRed" TextWrapping="Wrap"/>
+        <Button x:Name="BtnLogin" Classes="accent" Content="Giriş Yap" Click="OnLogin"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+        <Button x:Name="BtnDemo" Content="Sunucusuz dene (demo)" Click="OnDemo"
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+        <TextBlock Text="İnternet gerekmez. Eğitmenle aynı ağda olman yeterli."
+                   Foreground="Gray" FontSize="12" TextWrapping="Wrap"
+                   HorizontalAlignment="Center" TextAlignment="Center" Margin="0,8,0,0"/>
+      </StackPanel>
+    </Grid>
 
-          <Grid Margin="56" RowDefinitions="Auto,*,Auto">
-            <StackPanel Grid.Row="0" Spacing="22">
-              <StackPanel Orientation="Horizontal" Spacing="12">
-                <Border Width="44" Height="44" CornerRadius="14" Background="#26FFFFFF">
-                  <TextBlock Text="S" Foreground="White" FontSize="24" FontWeight="Bold"
-                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <TextBlock Text="Sınav Portalı" Foreground="White" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
-              </StackPanel>
-              <TextBlock Text="Öğrenci&#10;Sınav Sistemi" Foreground="White"
-                         FontSize="52" FontWeight="Bold" LineHeight="58"/>
-            </StackPanel>
-
-            <StackPanel Grid.Row="1" VerticalAlignment="Center" Spacing="22">
-              <StackPanel Orientation="Horizontal" Spacing="16">
-                <Border Width="34" Height="34" CornerRadius="17" Background="#26FFFFFF" VerticalAlignment="Top">
-                  <TextBlock Text="1" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel Spacing="2" Width="300">
-                  <TextBlock Text="Bağlan" Foreground="White" FontWeight="SemiBold" FontSize="17"/>
-                  <TextBlock Text="Eğitmenin verdiği IP adresini yaz." Foreground="#D6D9FF" TextWrapping="Wrap"/>
-                </StackPanel>
-              </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="16">
-                <Border Width="34" Height="34" CornerRadius="17" Background="#26FFFFFF" VerticalAlignment="Top">
-                  <TextBlock Text="2" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel Spacing="2" Width="300">
-                  <TextBlock Text="Giriş yap" Foreground="White" FontWeight="SemiBold" FontSize="17"/>
-                  <TextBlock Text="Okul kullanıcı adın ve şifrenle gir." Foreground="#D6D9FF" TextWrapping="Wrap"/>
-                </StackPanel>
-              </StackPanel>
-              <StackPanel Orientation="Horizontal" Spacing="16">
-                <Border Width="34" Height="34" CornerRadius="17" Background="#26FFFFFF" VerticalAlignment="Top">
-                  <TextBlock Text="3" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel Spacing="2" Width="300">
-                  <TextBlock Text="Lobide bekle" Foreground="White" FontWeight="SemiBold" FontSize="17"/>
-                  <TextBlock Text="Eğitmen başlatınca sorular kendiliğinden açılır." Foreground="#D6D9FF" TextWrapping="Wrap"/>
-                </StackPanel>
-              </StackPanel>
-            </StackPanel>
-
-            <TextBlock Grid.Row="2" Text="Bu uygulama internet gerektirmez. Eğitmenle aynı ağda olman yeterli."
-                       Foreground="#C4C8F5" FontSize="13" TextWrapping="Wrap" MaxWidth="340" HorizontalAlignment="Left"/>
-          </Grid>
-        </Grid>
+    <!-- ============================ 2) LOBİ ============================ -->
+    <DockPanel x:Name="LobbyPanel" IsVisible="False">
+      <Border DockPanel.Dock="Left" Width="220" Background="#1E293B" Padding="12">
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Top" Spacing="4">
+            <TextBlock Classes="panelBaslik" Text="Öğrenci Paneli"/>
+            <TextBlock x:Name="LobbyName" Classes="panelSoluk" Text="Hoş geldin" Margin="4,0,0,16"/>
+          </StackPanel>
+          <Button Classes="menu" Content="Çıkış Yap" Click="OnLogout" VerticalAlignment="Bottom"/>
+        </DockPanel>
       </Border>
 
-      <Border Grid.Column="1" Background="#F3F5FB">
-        <Border Classes="card" Width="440" Padding="40,36" HorizontalAlignment="Center" VerticalAlignment="Center">
-          <StackPanel Spacing="14">
-            <StackPanel Spacing="4" Margin="0,0,0,8">
-              <TextBlock Text="Hoş geldin" FontSize="32" FontWeight="Bold" Foreground="#111827"/>
-              <TextBlock Text="Devam etmek için hesabınla giriş yap." Foreground="#6B7280"/>
-            </StackPanel>
-            <TextBlock Classes="label" Text="Eğitmen IP adresi"/>
-            <TextBox x:Name="TxtIp" Watermark="192.168.1.20"/>
-            <TextBlock Classes="label" Text="Kullanıcı adı"/>
-            <TextBox x:Name="TxtUser"/>
-            <TextBlock Classes="label" Text="Şifre"/>
-            <TextBox x:Name="TxtPass" PasswordChar="●"/>
-            <TextBlock x:Name="LoginError" Foreground="#DC2626" FontWeight="SemiBold" TextWrapping="Wrap" MinHeight="22"/>
-            <Button x:Name="BtnLogin" Classes="primary" Content="Bağlan ve giriş yap"
-                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnLogin"/>
-            <Button x:Name="BtnDemo" Classes="ghost" Content="Sunucusuz dene (demo)"
-                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Click="OnDemo"/>
+      <StackPanel Margin="20" Spacing="12">
+        <TextBlock Classes="baslik" Text="Sınav Bekleme Odası"/>
+
+        <Border x:Name="PillBorder" HorizontalAlignment="Left" CornerRadius="8" Padding="10,4" Background="#D1FAE5">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Ellipse x:Name="PillDot" Width="8" Height="8" Fill="#059669" VerticalAlignment="Center"/>
+            <TextBlock x:Name="PillText" Text="Bağlı" Foreground="#059669" FontWeight="SemiBold" FontSize="13"/>
           </StackPanel>
         </Border>
-      </Border>
-    </Grid>
 
-    <!-- 2) LOBİ -->
-    <Grid x:Name="LobbyPanel" IsVisible="False">
-      <Grid.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-          <GradientStop Color="#EEF2FF" Offset="0"/>
-          <GradientStop Color="#F6F0FF" Offset="1"/>
-        </LinearGradientBrush>
-      </Grid.Background>
-      <Border Classes="card" Width="680" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="48,44">
-        <StackPanel Spacing="12">
-          <Border x:Name="PillBorder" HorizontalAlignment="Left" CornerRadius="16" Padding="14,5" Background="#D1FAE5">
-            <StackPanel Orientation="Horizontal" Spacing="8">
-              <Ellipse x:Name="PillDot" Width="9" Height="9" Fill="#059669" VerticalAlignment="Center"/>
-              <TextBlock x:Name="PillText" Text="Bağlı" Foreground="#059669" FontWeight="Bold" FontSize="13"/>
+        <TextBlock Text="Eğitmen sınavı başlatınca sorular bu ekranda kendiliğinden açılır. Bu pencereyi kapatma."
+                   TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left"/>
+
+        <UniformGrid Columns="2" MaxWidth="520" HorizontalAlignment="Left" Margin="0,4,0,0">
+          <Border Classes="kart" Margin="0,0,10,0">
+            <StackPanel>
+              <TextBlock Classes="kartBaslik" Text="Sunucu"/>
+              <TextBlock x:Name="LobbyServer" Classes="kartDeger" Text="-"/>
             </StackPanel>
           </Border>
-          <TextBlock x:Name="LobbyName" Text="Merhaba" FontSize="36" FontWeight="Bold" Foreground="#111827"/>
-          <TextBlock Text="Eğitmen sınavı başlatınca sorular bu ekranda kendiliğinden açılır."
-                     FontSize="18" Foreground="#4B5563" TextWrapping="Wrap" MaxWidth="500"/>
+          <Border Classes="kart">
+            <StackPanel>
+              <TextBlock Classes="kartBaslik" Text="Bekleme Süresi"/>
+              <TextBlock x:Name="LobbyWait" Classes="kartDeger" Text="00:00"/>
+            </StackPanel>
+          </Border>
+        </UniformGrid>
 
-          <Grid ColumnDefinitions="*,12,*" Margin="0,14,0,4">
-            <Border Grid.Column="0" Background="#F5F6FC" CornerRadius="16" Padding="20,16">
-              <StackPanel Spacing="2">
-                <TextBlock Classes="statLabel" Text="SUNUCU"/>
-                <TextBlock x:Name="LobbyServer" Classes="stat" Text="-"/>
-              </StackPanel>
-            </Border>
-            <Border Grid.Column="2" Background="#F5F6FC" CornerRadius="16" Padding="20,16">
-              <StackPanel Spacing="2">
-                <TextBlock Classes="statLabel" Text="BEKLEME SÜRESİ"/>
-                <TextBlock x:Name="LobbyWait" Classes="stat" Text="00:00"/>
-              </StackPanel>
-            </Border>
-          </Grid>
+        <Button x:Name="BtnDemoExam" Classes="accent" Content="Örnek sınavı başlat"
+                IsVisible="False" Click="OnDemoExam" Margin="0,8,0,0"/>
+      </StackPanel>
+    </DockPanel>
 
-          <TextBlock Text="Bu pencereyi kapatma ve bağlantını kesme." Foreground="#6B7280" FontSize="13"/>
-          <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0">
-            <Button x:Name="BtnDemoExam" Classes="primary" Content="Örnek sınavı başlat" IsVisible="False" Click="OnDemoExam"/>
-            <Button Classes="ghost" Content="Çıkış yap" Click="OnLogout"/>
-          </StackPanel>
-        </StackPanel>
-      </Border>
-    </Grid>
+    <!-- ============================ 3) SINAV ============================ -->
+    <DockPanel x:Name="ExamPanel" IsVisible="False">
 
-    <!-- 3) SINAV -->
-    <Grid x:Name="ExamPanel" IsVisible="False" RowDefinitions="Auto,6,*,Auto">
-      <Border Grid.Row="0" Padding="32,14">
-        <Border.Background>
-          <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
-            <GradientStop Color="#1E1B4B" Offset="0"/>
-            <GradientStop Color="#312E81" Offset="1"/>
-          </LinearGradientBrush>
-        </Border.Background>
+      <!-- Üst bilgi çubuğu -->
+      <Border DockPanel.Dock="Top" Background="#1E293B" Padding="20,10">
         <Grid ColumnDefinitions="*,Auto">
           <StackPanel VerticalAlignment="Center">
-            <TextBlock x:Name="ExamTitle" Text="Sınav" Foreground="White" FontSize="21" FontWeight="SemiBold"/>
-            <TextBlock x:Name="ExamProgress" Text="0 / 0 soru cevaplandı" Foreground="#B9BEF0" FontSize="13"/>
+            <TextBlock x:Name="ExamTitle" Text="Sınav" Foreground="White" FontSize="18" FontWeight="Bold"/>
+            <TextBlock x:Name="ExamProgress" Text="0 / 0 soru cevaplandı" Foreground="#94A3B8" FontSize="13"/>
           </StackPanel>
-          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
-            <TextBlock Text="Kalan süre" Foreground="#B9BEF0" VerticalAlignment="Center"/>
-            <Border x:Name="TimerBorder" Background="#1AFFFFFF" CornerRadius="14" Padding="16,6" MinWidth="140">
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <TextBlock Text="Kalan süre" Foreground="#94A3B8" VerticalAlignment="Center"/>
+            <Border x:Name="TimerBorder" Background="#334155" CornerRadius="8" Padding="14,4" MinWidth="120">
               <TextBlock x:Name="TimerText" Text="00:00" Foreground="White"
-                         FontSize="32" FontWeight="Bold" HorizontalAlignment="Center"/>
+                         FontSize="26" FontWeight="Bold" HorizontalAlignment="Center"/>
             </Border>
           </StackPanel>
         </Grid>
       </Border>
 
-      <ProgressBar x:Name="TimeBar" Grid.Row="1" Minimum="0" Maximum="100" Value="100"
-                   Height="6" MinHeight="6" CornerRadius="0" Background="#1E1B4B" Foreground="#A5B4FC"/>
+      <ProgressBar x:Name="TimeBar" DockPanel.Dock="Top" Minimum="0" Maximum="100" Value="100"
+                   Height="4" MinHeight="4" CornerRadius="0" Background="#334155" Foreground="#94A3B8"/>
 
-      <Grid Grid.Row="2" ColumnDefinitions="270,*">
-        <Border Grid.Column="0" Background="White" BorderBrush="#E9EBF4" BorderThickness="0,0,1,0" Padding="22">
-          <ScrollViewer>
-            <StackPanel Spacing="14">
-              <TextBlock Text="Sorular" FontSize="18" FontWeight="Bold" Foreground="#111827"/>
-              <WrapPanel x:Name="NavPanel"/>
-              <Border Background="#F5F6FC" CornerRadius="14" Padding="14" Margin="0,6,0,0">
-                <StackPanel Spacing="8">
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Border Width="16" Height="16" CornerRadius="5" Background="#D1FAE5" BorderBrush="#059669" BorderThickness="2"/>
-                    <TextBlock Text="Cevaplandı" Foreground="#4B5563" FontSize="13"/>
-                  </StackPanel>
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Border Width="16" Height="16" CornerRadius="5" Background="White" BorderBrush="#D97706" BorderThickness="3"/>
-                    <TextBlock Text="Sonra bak" Foreground="#4B5563" FontSize="13"/>
-                  </StackPanel>
-                  <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Border Width="16" Height="16" CornerRadius="5" Background="White" BorderBrush="#D1D5DB" BorderThickness="2"/>
-                    <TextBlock Text="Boş" Foreground="#4B5563" FontSize="13"/>
-                  </StackPanel>
-                </StackPanel>
-              </Border>
-              <TextBlock Text="Kısayollar: ← → sorular arası, A B C D şık seçme." Foreground="#6B7280" FontSize="13" TextWrapping="Wrap" Margin="2,6,0,0"/>
-            </StackPanel>
-          </ScrollViewer>
-        </Border>
-
-        <Grid Grid.Column="1" RowDefinitions="*,Auto" Margin="40,28,40,18">
-          <ScrollViewer x:Name="QScroll" Grid.Row="0">
-            <StackPanel x:Name="QArea" MaxWidth="860" Margin="0,0,8,0"/>
-          </ScrollViewer>
-          <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto" MaxWidth="860" Margin="0,14,0,0">
-            <Button x:Name="BtnPrev" Grid.Column="0" Classes="ghost" Content="← Önceki" Click="OnPrev"/>
-            <Button x:Name="BtnFlag" Grid.Column="1" Classes="ghost" Content="Sonra bak" Margin="10,0,0,0" Click="OnFlag"/>
-            <Button x:Name="BtnNext" Grid.Column="3" Classes="primary" Content="Sonraki →" Click="OnNext"/>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      <Border Grid.Row="3" Background="White" BorderBrush="#E9EBF4" BorderThickness="0,1,0,0" Padding="32,12">
+      <!-- Alt çubuk: bitir -->
+      <Border DockPanel.Dock="Bottom" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="20,10">
         <Grid ColumnDefinitions="*,Auto">
           <TextBlock Text="Cevapların kendiliğinden saklanır. Süre bitince otomatik gönderilir."
-                     Foreground="#6B7280" VerticalAlignment="Center"/>
-          <Button x:Name="BtnFinish" Grid.Column="1" Classes="finish" Content="Bitir ve gönder" Click="OnFinish"/>
+                     Foreground="Gray" VerticalAlignment="Center"/>
+          <Button x:Name="BtnFinish" Grid.Column="1" Classes="accent" Content="Bitir ve Gönder" Click="OnFinish"/>
         </Grid>
       </Border>
-    </Grid>
 
-    <!-- 4) GÖNDERİLDİ / SÜRE DOLDU -->
-    <Grid x:Name="DonePanel" IsVisible="False">
-      <Grid.Background>
-        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-          <GradientStop Color="#EEF2FF" Offset="0"/>
-          <GradientStop Color="#F6F0FF" Offset="1"/>
-        </LinearGradientBrush>
-      </Grid.Background>
-      <Border Classes="card" Width="680" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="48,44">
-        <StackPanel Spacing="12">
-          <Border x:Name="DoneIcon" Width="68" Height="68" CornerRadius="34" HorizontalAlignment="Left" Background="#EEF2FF">
-            <TextBlock x:Name="DoneIconText" Text="…" FontSize="32" FontWeight="Bold" Foreground="#4F46E5"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
-          </Border>
-          <TextBlock x:Name="DoneTitle" Text="Sınavınız gönderiliyor…" FontSize="32" FontWeight="Bold" Foreground="#111827" TextWrapping="Wrap"/>
-          <TextBlock x:Name="DoneText" FontSize="18" Foreground="#4B5563" TextWrapping="Wrap" MaxWidth="500"/>
-          <Grid x:Name="DoneFacts" IsVisible="False" ColumnDefinitions="*,12,*" Margin="0,12,0,0">
-            <Border Grid.Column="0" Background="#F5F6FC" CornerRadius="16" Padding="20,16">
-              <StackPanel Spacing="2">
-                <TextBlock Classes="statLabel" Text="CEVAPLANAN"/>
-                <TextBlock x:Name="DoneAnswered" Classes="stat" Text="-"/>
+      <!-- Sol: soru numaraları (eğitmendeki yan panel gibi) -->
+      <Border DockPanel.Dock="Left" Width="220" Background="#1E293B" Padding="12">
+        <ScrollViewer>
+          <StackPanel Spacing="12">
+            <TextBlock Classes="panelBaslik" Text="Sorular"/>
+            <WrapPanel x:Name="NavPanel"/>
+            <StackPanel Spacing="6" Margin="4,8,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Width="14" Height="14" CornerRadius="4" Background="#DCFCE7"/>
+                <TextBlock Classes="panelSoluk" Text="Cevaplandı" FontSize="13"/>
               </StackPanel>
-            </Border>
-            <Border Grid.Column="2" Background="#F5F6FC" CornerRadius="16" Padding="20,16">
-              <StackPanel Spacing="2">
-                <TextBlock Classes="statLabel" Text="SINAV SÜRESİ"/>
-                <TextBlock x:Name="DoneUsed" Classes="stat" Text="-"/>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Width="14" Height="14" CornerRadius="4" Background="#334155" BorderBrush="#F59E0B" BorderThickness="2"/>
+                <TextBlock Classes="panelSoluk" Text="Sonra bak" FontSize="13"/>
               </StackPanel>
-            </Border>
-          </Grid>
-          <TextBlock x:Name="DoneError" Foreground="#DC2626" FontWeight="SemiBold" TextWrapping="Wrap"/>
-          <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,8,0,0">
-            <Button x:Name="BtnRetry" Classes="primary" Content="Tekrar göndermeyi dene" IsVisible="False" Click="OnRetry"/>
-            <Button x:Name="BtnBack" Classes="ghost" Content="Lobiye dön" IsVisible="False" Click="OnBack"/>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <Border Width="14" Height="14" CornerRadius="4" Background="#334155"/>
+                <TextBlock Classes="panelSoluk" Text="Boş" FontSize="13"/>
+              </StackPanel>
+            </StackPanel>
+            <TextBlock Classes="panelSoluk" FontSize="12" Margin="4,8,0,0"
+                       Text="Kısayollar: ← → sorular arası, A B C D şık seçme."/>
           </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Sağ: aktif soru -->
+      <Grid RowDefinitions="*,Auto" Margin="20">
+        <ScrollViewer x:Name="QScroll" Grid.Row="0">
+          <StackPanel x:Name="QArea" MaxWidth="860" HorizontalAlignment="Left" Margin="0,0,8,0"/>
+        </ScrollViewer>
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto" MaxWidth="860" Margin="0,12,0,0">
+          <Button x:Name="BtnPrev" Grid.Column="0" Content="← Önceki" Click="OnPrev"/>
+          <Button x:Name="BtnFlag" Grid.Column="1" Content="Sonra bak" Margin="8,0,0,0" Click="OnFlag"/>
+          <Button x:Name="BtnNext" Grid.Column="3" Content="Sonraki →" Click="OnNext"/>
+        </Grid>
+      </Grid>
+    </DockPanel>
+
+    <!-- ===================== 4) GÖNDERİLDİ / SÜRE DOLDU ===================== -->
+    <DockPanel x:Name="DonePanel" IsVisible="False">
+      <Border DockPanel.Dock="Left" Width="220" Background="#1E293B" Padding="12">
+        <StackPanel Spacing="4">
+          <TextBlock Classes="panelBaslik" Text="Öğrenci Paneli"/>
+          <TextBlock Classes="panelSoluk" Text="Sınav sonucu" Margin="4,0,0,16"/>
         </StackPanel>
       </Border>
-    </Grid>
 
-    <!-- Onay penceresi -->
-    <Grid x:Name="ModalOverlay" IsVisible="False" Background="#B31E1B4B">
-      <Border Width="480" HorizontalAlignment="Center" VerticalAlignment="Center"
-              Background="White" CornerRadius="20" Padding="32" BoxShadow="0 24 60 0 #55000000">
-        <StackPanel Spacing="8">
-          <TextBlock Text="Sınavı bitirmek istiyor musun?" FontSize="22" FontWeight="Bold" Foreground="#111827"/>
-          <TextBlock x:Name="ModalText" Foreground="#4B5563" TextWrapping="Wrap"/>
-          <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,18,0,0">
-            <Button Classes="ghost" Content="Sınava dön" Click="OnModalCancel"/>
-            <Button Classes="primary" Content="Evet, gönder" Click="OnModalOk"/>
+      <StackPanel Margin="20" Spacing="12">
+        <StackPanel Orientation="Horizontal" Spacing="12">
+          <Border x:Name="DoneIcon" Width="40" Height="40" CornerRadius="20" Background="#F1F5F9" VerticalAlignment="Center">
+            <TextBlock x:Name="DoneIconText" Text="…" FontSize="20" FontWeight="Bold" Foreground="#1E293B"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+          </Border>
+          <TextBlock x:Name="DoneTitle" Classes="baslik" Text="Sınavınız gönderiliyor…"
+                     VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <TextBlock x:Name="DoneText" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left"/>
+
+        <UniformGrid x:Name="DoneFacts" IsVisible="False" Columns="2" MaxWidth="520" HorizontalAlignment="Left" Margin="0,4,0,0">
+          <Border Classes="kart" Margin="0,0,10,0">
+            <StackPanel>
+              <TextBlock Classes="kartBaslik" Text="Cevaplanan"/>
+              <TextBlock x:Name="DoneAnswered" Classes="kartDeger" Text="-"/>
+            </StackPanel>
+          </Border>
+          <Border Classes="kart">
+            <StackPanel>
+              <TextBlock Classes="kartBaslik" Text="Kullanılan Süre"/>
+              <TextBlock x:Name="DoneUsed" Classes="kartDeger" Text="-"/>
+            </StackPanel>
+          </Border>
+        </UniformGrid>
+
+        <TextBlock x:Name="DoneError" Foreground="IndianRed" TextWrapping="Wrap" MaxWidth="640" HorizontalAlignment="Left"/>
+
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4,0,0">
+          <Button x:Name="BtnRetry" Classes="accent" Content="Tekrar Göndermeyi Dene" IsVisible="False" Click="OnRetry"/>
+          <Button x:Name="BtnBack" Content="Lobiye Dön" IsVisible="False" Click="OnBack"/>
+        </StackPanel>
+      </StackPanel>
+    </DockPanel>
+
+    <!-- ============================ Onay penceresi ============================ -->
+    <Grid x:Name="ModalOverlay" IsVisible="False" Background="#991E293B">
+      <Border Width="440" HorizontalAlignment="Center" VerticalAlignment="Center"
+              Background="White" CornerRadius="8" Padding="24">
+        <StackPanel Spacing="10">
+          <TextBlock Text="Sınavı bitirmek istiyor musun?" FontSize="20" FontWeight="Bold"/>
+          <TextBlock x:Name="ModalText" TextWrapping="Wrap"/>
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Button Content="Sınava Dön" Click="OnModalCancel"/>
+            <Button Classes="accent" Content="Evet, Gönder" Click="OnModalOk"/>
           </StackPanel>
         </StackPanel>
       </Border>
@@ -353,4 +250,3 @@
 
   </Grid>
 </Window>
-
