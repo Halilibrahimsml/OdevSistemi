@@ -1,14 +1,27 @@
+using OdevSistemi.Shared;
+
 namespace OdevSistemi.StudentUI;
 
+/// <summary>
+/// Öğrenci uygulamasının ayarları.
+/// Sunucu adresi, hub yolu ve metot adları OdevSistemi.Shared içinden gelir
+/// (ServerInfo, HubEvents, HubMethods), burada tekrar yazılmaz.
+/// </summary>
 public static class AppConfig
 {
-    public const int Port = 5000;
-    public const string LoginPath = "/api/auth/login";        // POST {username, password} -> {token, userId, fullName, role}
-    public const string HubPath = "/examHub";                  // SignalR hub adresi
-    public const string SubmitPath = "/api/submissions";       // POST {examId, studentId, answers:[{questionId, answer}]}
-    public const string EventReceiveExam = "ReceiveExam";      // sunucu -> öğrenci: sınav paketi
-    public const string EventExamEnded = "ExamEnded";          // sunucu -> öğrenci: (opsiyonel) sınav bitti
+    /// <summary>Sunucu portu (ServerInfo.Port = 5000).</summary>
+    public const int Port = ServerInfo.Port;
 
-    /// <summary>Gerekirse öğrenci kaydı için hub metodu adı, örn. "RegisterStudent".</summary>
-    public static readonly string? RegisterMethod = null;
+    /// <summary>Giriş API'si (1. kişi): POST LoginRequest -> LoginResponse.</summary>
+    public const string LoginPath = "/api/auth/login";
+
+    /// <summary>
+    /// Sayaç, sunucudaki bitiş saatinden bu kadar saniye önce sıfırlanır ve cevaplar otomatik gönderilir.
+    /// Sunucu bitişten sonra sadece 2 sn tolerans tanıyor (ExamSessionManager.NetworkToleranceSeconds);
+    /// ağ gecikmesi ve küçük saat farkları yüzünden gönderim reddedilmesin diye pay bırakıyoruz.
+    /// </summary>
+    public const int AutoSubmitSafetySeconds = 3;
+
+    /// <summary>Gönderimden sonra öğrenciye puanı gösterilsin mi? (Grupça karar verilecek.)</summary>
+    public const bool ShowScore = true;
 }

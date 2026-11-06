@@ -1,11 +1,11 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Threading;
-
+using OdevSistemi.Shared.Contracts;
 
 namespace OdevSistemi.StudentUI.Views;
 
@@ -32,6 +32,10 @@ public partial class MainWindow : Window
     private int _totalSec;
     private bool _submitted, _timeUp;
 
+    // Gönderilmiş (veya sunucunun kesin reddettiği) sınavlar.
+    // Yeniden bağlanınca sunucu aktif sınavı tekrar yollar; bunlar tekrar açılmasın.
+    private readonly HashSet<int> _finishedExamIds = new();
+
     private List<ExamQuestion> Qs => _exam?.Questions ?? new List<ExamQuestion>();
 
     public MainWindow()
@@ -43,7 +47,11 @@ public partial class MainWindow : Window
             LobbyWait.Text = Fmt((int)(DateTime.Now - _lobbySince).TotalSeconds);
 
         // SignalR olayları arka plan thread'inden gelir, arayüze UI thread'inde dokunulmalı.
-        _hub.ExamReceived += exam => Dispatcher.UIThread.Post(() => StartExam(exam));
+        _hub.ExamReceived += exam => Dispatcher.UIThread.Post(() =>
+        {
+            if (_finishedExamIds.Contains(exam.ExamId)) return;   // zaten gönderildi, tekrar açma
+            StartExam(exam);
+        });
         _hub.ExamEnded += () => Dispatcher.UIThread.Post(() =>
         {
             if (_exam != null && !_submitted) _ = SubmitAsync(false);
@@ -110,15 +118,16 @@ public partial class MainWindow : Window
         if (res.Status == 0)
             LoginError.Text = "Sunucuya ulaşılamadı. IP adresini ve aynı ağda olduğunu kontrol et.";
         else if (res.Status is 400 or 401)
-            LoginError.Text = "Kullanıcı adı veya şifre hatalı.";
+            LoginError.Text = res.Error ?? "Öğrenci numarası veya şifre hatalı.";
+        else if (res.Status == 403)   // rol kontrolü: eğitmen hesabıyla öğrenci uygulamasına girilemez
+            LoginError.Text = res.Error ?? "Bu uygulamaya sadece öğrenciler giriş yapabilir.";
         else if (!res.Ok || data is null)
             LoginError.Text = $"Sunucu hatası ({res.Status}). Eğitmene haber ver.";
-        else if (data.Role != "" && !string.Equals(data.Role, "Student", StringComparison.OrdinalIgnoreCase))
-            LoginError.Text = "Bu hesap öğrenci hesabı değil.";
         else
         {
-            _userId = data.UserId;
-            _userName = string.IsNullOrWhiteSpace(data.FullName) ? user : data.FullName;
+            // Hub'a kayıtta veritabanındaki kullanıcı Id'si kullanılır (öğrenci numarası değil).
+            _userId = data.User.Id;
+            _userName = string.IsNullOrWhiteSpace(data.User.FullName) ? user : data.User.FullName;
             try
             {
                 await _hub.ConnectAsync(_api.BaseUrl, _api.Token, _userId, _userName);
@@ -250,8 +259,8 @@ public partial class MainWindow : Window
 
         bool warn = left <= 300 && left > 60;
         bool danger = left <= 60;
-        TimerBorder.Background = Brush.Parse(danger ? "#DC2626" : warn ? "#EA580C" : "#1AFFFFFF");
-        TimeBar.Foreground = Brush.Parse(danger ? "#DC2626" : warn ? "#EA580C" : "#A5B4FC");
+        TimerBorder.Background = Brush.Parse(danger ? "#DC2626" : warn ? "#EA580C" : "#334155");
+        TimeBar.Foreground = Brush.Parse(danger ? "#DC2626" : warn ? "#EA580C" : "#94A3B8");
         TimeBar.Value = Math.Clamp(leftMs / (_totalSec * 1000.0) * 100, 0, 100);
 
         if (left <= 0) _ = SubmitAsync(true);
@@ -273,18 +282,17 @@ public partial class MainWindow : Window
                 Width = 42,
                 Height = 42,
                 Margin = new Thickness(0, 0, 8, 8),
-                CornerRadius = new CornerRadius(12),
+                CornerRadius = new CornerRadius(8),
                 BorderThickness = new Thickness(flagged ? 3 : 2),
-                Background = Brush.Parse(cur ? "#4F46E5" : answered ? "#D1FAE5" : "White"),
-                BorderBrush = Brush.Parse(flagged ? "#D97706" : cur ? "#4F46E5" : answered ? "#059669" : "#E2E5EE"),
+                Background = Brush.Parse(cur ? "White" : answered ? "#DCFCE7" : "#334155"),
+                BorderBrush = Brush.Parse(flagged ? "#F59E0B" : cur ? "White" : answered ? "#DCFCE7" : "#334155"),
                 Cursor = new Cursor(StandardCursorType.Hand),
                 Child = new TextBlock
                 {
                     Text = (i + 1).ToString(),
-                    FontFamily = new FontFamily("Segoe UI"),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Foreground = Brush.Parse(cur ? "White" : answered ? "#059669" : "#1F2937")
+                    Foreground = Brush.Parse(cur ? "#1E293B" : answered ? "#166534" : "White")
                 }
             };
             int idx = i;
@@ -313,25 +321,24 @@ public partial class MainWindow : Window
         head.Children.Add(new TextBlock
         {
             Text = $"Soru {_current + 1} / {Qs.Count}",
-            FontFamily = new FontFamily("Segoe UI"),
-            FontSize = 26,
-            FontWeight = FontWeight.SemiBold,
+            FontSize = 20,
+            FontWeight = FontWeight.Bold,
             VerticalAlignment = VerticalAlignment.Center
         });
         head.Children.Add(new Border
         {
-            Background = Brush.Parse("#EEF2FF"),
-            CornerRadius = new CornerRadius(12),
+            Background = Brush.Parse("#F1F5F9"),
+            CornerRadius = new CornerRadius(8),
             Padding = new Thickness(11, 3),
             VerticalAlignment = VerticalAlignment.Center,
-            Child = new TextBlock { Text = $"{q.Points:0.##} puan", Foreground = Brush.Parse("#4338CA"), FontWeight = FontWeight.SemiBold, FontSize = 13 }
+            Child = new TextBlock { Text = $"{q.Points:0.##} puan", Foreground = Brush.Parse("#334155"), FontWeight = FontWeight.SemiBold, FontSize = 13 }
         });
         QArea.Children.Add(head);
 
         QArea.Children.Add(new TextBlock
         {
             Text = q.Text,
-            FontSize = 20,
+            FontSize = 17,
             TextWrapping = TextWrapping.Wrap,
             MaxWidth = 740,
             HorizontalAlignment = HorizontalAlignment.Left,
@@ -353,14 +360,14 @@ public partial class MainWindow : Window
                 AcceptsReturn = true,
                 TextWrapping = TextWrapping.Wrap,
                 MinHeight = 220,
-                FontSize = 17,
+                FontSize = 15,
                 MaxWidth = 800,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             var count = new TextBlock
             {
                 Text = $"{tb.Text?.Length ?? 0} karakter",
-                Foreground = Brush.Parse("#6B7280"),
+                Foreground = Brush.Parse("Gray"),
                 FontSize = 13,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 MaxWidth = 800,
@@ -390,20 +397,20 @@ public partial class MainWindow : Window
         {
             Width = 34,
             Height = 34,
-            CornerRadius = new CornerRadius(12),
-            Background = Brush.Parse(sel ? "#4F46E5" : "#F1F3FA"),
+            CornerRadius = new CornerRadius(8),
+            Background = Brush.Parse(sel ? "#1E293B" : "#F1F5F9"),
             VerticalAlignment = VerticalAlignment.Center,
             Margin = new Thickness(0, 0, 14, 0),
             Child = new TextBlock
             {
                 Text = o.Key,
                 FontWeight = FontWeight.Bold,
-                Foreground = Brush.Parse(sel ? "White" : "#1F2937"),
+                Foreground = Brush.Parse(sel ? "White" : "#1E293B"),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             }
         };
-        var text = new TextBlock { Text = o.Text, FontSize = 17, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
+        var text = new TextBlock { Text = o.Text, FontSize = 15, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
 
         var row = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*") };
         Grid.SetColumn(key, 0);
@@ -415,10 +422,10 @@ public partial class MainWindow : Window
         {
             Padding = new Thickness(16, 13),
             Margin = new Thickness(0, 0, 0, 10),
-            CornerRadius = new CornerRadius(14),
+            CornerRadius = new CornerRadius(8),
             BorderThickness = new Thickness(2),
-            Background = Brush.Parse(sel ? "#EEF2FF" : "White"),
-            BorderBrush = Brush.Parse(sel ? "#4F46E5" : "#E2E5EE"),
+            Background = Brush.Parse(sel ? "#F1F5F9" : "White"),
+            BorderBrush = Brush.Parse(sel ? "#1E293B" : "#E2E8F0"),
             Cursor = new Cursor(StandardCursorType.Hand),
             Child = row
         };
@@ -460,7 +467,7 @@ public partial class MainWindow : Window
     {
         bool on = _flags.Contains(Qs[_current].Id);
         BtnFlag.Content = on ? "İşareti kaldır" : "Sonra bak";
-        BtnFlag.Foreground = Brush.Parse(on ? "#D97706" : "#1F2937");
+        BtnFlag.Foreground = Brush.Parse(on ? "#D97706" : "#1E293B");
     }
 
     // ---------- Klavye kısayolları ----------
@@ -525,50 +532,64 @@ public partial class MainWindow : Window
     {
         if (_exam is null) return;
         BtnRetry.IsVisible = false;
+        BtnBack.IsVisible = false;
         DoneError.Text = "";
 
-        ApiResult res;
+        SubmitResultDto? res;
         if (_demo)
         {
             await Task.Delay(700);
-            res = new ApiResult(true, 200);
+            res = new SubmitResultDto(true, "Demo: cevaplar alındı.");
         }
         else
         {
-            var payload = new SubmissionRequest
-            {
-                ExamId = _exam.ExamId,
-                StudentId = _userId,
-                Answers = Qs.Where(q => _answers.ContainsKey(q.Id))
-                            .Select(q => new AnswerItem { QuestionId = q.Id, Answer = _answers[q.Id] })
-                            .ToList()
-            };
-            res = await _api.SubmitAsync(payload);
+            // Tüm sorular gönderilir; boş bırakılanların cevabı null (sunucu 0 puan verir).
+            // Çoktan seçmelide şık harfi ("A", "B"...) gider; puanlama harfi kabul ediyor.
+            var dto = new SubmitExamDto(
+                _exam.ExamId,
+                Qs.Select(q => new AnswerDto(q.Id, _answers.TryGetValue(q.Id, out var a) ? a : null)).ToList());
+            res = await _hub.SubmitAsync(dto);
         }
 
-        if (res.Ok && !_demo) ExamBackup.Delete(_userId);
-        else if (!res.Ok && !_demo && res.Status is (400 or 403)) ExamBackup.Archive(_userId, _exam.ExamId);
+        // Daha önce gönderilmiş (ör. bağlantı koptuğu an cevap sunucuya ulaşmıştı) -> başarılı say.
+        bool alreadySent = res is { Success: false } &&
+                           res.Message.Contains("zaten", StringComparison.OrdinalIgnoreCase);
 
-        if (res.Ok)
+        if (res is { Success: true } || alreadySent)
         {
+            if (!_demo) ExamBackup.Delete(_userId);
+            _finishedExamIds.Add(_exam.ExamId);
+
+            string text = alreadySent
+                ? "Bu sınavı daha önce göndermiştin, cevapların eğitmende kayıtlı."
+                : "Cevapların eğitmene ulaştı. Artık bu pencereyi kapatabilirsin.";
+            if (AppConfig.ShowScore && !alreadySent && res?.Score is double score && res.MaxScore is double max)
+                text += $" Puanın: {score:0.##} / {max:0.##}";
+
             SetDone(_timeUp ? "time" : "ok",
                     _timeUp ? "Süre doldu, cevapların gönderildi" : "Sınavınız gönderildi",
-                    "Cevapların eğitmene ulaştı. Artık bu pencereyi kapatabilirsin.");
+                    text);
             DoneAnswered.Text = $"{_answers.Count} / {Qs.Count}";
             int used = (int)Math.Min((DateTime.Now - _startedAt).TotalSeconds, _totalSec);
             DoneUsed.Text = Fmt(used);
             DoneFacts.IsVisible = true;
             BtnBack.IsVisible = true;
         }
+        else if (res is null)
+        {
+            // Sunucuya ulaşılamadı: yedek duruyor, tekrar denenebilir.
+            SetDone("fail", "Cevaplar gönderilemedi", "Cevapların bu bilgisayarda duruyor.");
+            DoneError.Text = "Sunucuya ulaşılamıyor. Ağ bağlantını kontrol edip tekrar dene.";
+            BtnRetry.IsVisible = true;
+        }
         else
         {
-            SetDone("fail", "Cevaplar gönderilemedi", "Cevapların bu bilgisayarda duruyor.");
-            DoneError.Text = res.Status == 0
-                ? "Sunucuya ulaşılamıyor. Ağ bağlantını kontrol edip tekrar dene."
-                : res.Status is 400 or 403
-                    ? "Sunucu gönderimi kabul etmedi (süre bitmiş olabilir). Eğitmene haber ver."
-                    : $"Sunucu hatası ({res.Status}). Tekrar dene veya eğitmene haber ver.";
-            BtnRetry.IsVisible = true;
+            // Sunucu kesin olarak reddetti (süre doldu, sınav aktif değil...): yedek arşivlenir.
+            if (!_demo) ExamBackup.Archive(_userId, _exam.ExamId);
+            _finishedExamIds.Add(_exam.ExamId);
+            SetDone("fail", "Cevaplar kabul edilmedi", "Cevapların bu bilgisayarda yedeklendi.");
+            DoneError.Text = $"{res.Message} Eğitmene haber ver.";
+            BtnBack.IsVisible = true;
         }
     }
 
@@ -579,7 +600,7 @@ public partial class MainWindow : Window
             "ok" => ("✓", "#D1FAE5", "#059669"),
             "time" => ("!", "#FEF3C7", "#D97706"),
             "fail" => ("!", "#FEE2E2", "#DC2626"),
-            _ => ("…", "#EEF2FF", "#4F46E5")
+            _ => ("…", "#F1F5F9", "#1E293B")
         };
         DoneIconText.Text = glyph;
         DoneIconText.Foreground = Brush.Parse(fg);

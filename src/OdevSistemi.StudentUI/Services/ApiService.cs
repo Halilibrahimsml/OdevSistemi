@@ -1,14 +1,17 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using OdevSistemi.Shared;
+using OdevSistemi.Shared.Dtos;
 
 namespace OdevSistemi.StudentUI;
 
-/// name="Status">HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı.
-
+/// <summary>Status: HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı. Error: sunucunun "message" alanı (varsa).</summary>
 public record ApiResult(bool Ok, int Status, string? Error = null);
 
-///Sunucuyla HTTP üzerinden konuşur: giriş ve cevap gönderme.
+/// <summary>
+/// Sunucuyla HTTP üzerinden konuşur: sadece giriş.
+/// Cevap gönderimi HTTP ile değil, SignalR hub üzerinden yapılır (ExamHubService.SubmitAsync).
+/// </summary>
 public class ApiService
 {
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(10) };
@@ -23,10 +26,16 @@ public class ApiService
     {
         try
         {
-            var body = new LoginRequest { Username = username, Password = password };
+            var body = new LoginRequest
+            {
+                Username = username,
+                Password = password,
+                RequiredRole = UserRole.Student   // rol tabanlı giriş: eğitmen hesabı bu uygulamaya giremez
+            };
+
             var res = await _http.PostAsJsonAsync(BaseUrl + AppConfig.LoginPath, body, Json);
             if (!res.IsSuccessStatusCode)
-                return (new ApiResult(false, (int)res.StatusCode), null);
+                return (new ApiResult(false, (int)res.StatusCode, await ReadMessageAsync(res)), null);
 
             var data = await res.Content.ReadFromJsonAsync<LoginResponse>(Json);
             Token = data?.Token ?? "";
@@ -38,21 +47,16 @@ public class ApiService
         }
     }
 
-    public async Task<ApiResult> SubmitAsync(SubmissionRequest body)
+    // Sunucu hata durumunda {"message": "..."} döndürüyor (AuthController).
+    private static async Task<string?> ReadMessageAsync(HttpResponseMessage res)
     {
         try
         {
-            using var req = new HttpRequestMessage(HttpMethod.Post, BaseUrl + AppConfig.SubmitPath)
-            {
-                Content = JsonContent.Create(body, options: Json)
-            };
-            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Token);
-            var res = await _http.SendAsync(req);
-            return new ApiResult(res.IsSuccessStatusCode, (int)res.StatusCode);
+            var body = await res.Content.ReadFromJsonAsync<JsonElement>(Json);
+            if (body.ValueKind == JsonValueKind.Object && body.TryGetProperty("message", out var m))
+                return m.GetString();
         }
-        catch (Exception ex)
-        {
-            return new ApiResult(false, 0, ex.Message);
-        }
+        catch { /* gövde JSON değilse mesaj yok */ }
+        return null;
     }
 }
