@@ -27,6 +27,8 @@
             <ComboBox x:Name="SinavSecimi" Width="340"
                       SelectionChanged="SinavSecimi_SelectionChanged"/>
             <Button Content="Yenile" Click="Yenile_Click"/>
+            <Button x:Name="BitirButonu" Content="Sınavı Bitir" Foreground="White"
+        Background="IndianRed" IsVisible="False" Click="Bitir_Click"/>
         </StackPanel>
 
         <Grid>

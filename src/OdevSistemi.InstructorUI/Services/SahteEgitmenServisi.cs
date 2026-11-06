@@ -79,7 +79,14 @@ public class SahteEgitmenServisi : IEgitmenServisi
         s.Durum = "Devam ediyor";
         _sistemLogu.Add($"[{Zaman()}] '{s.Ad}' sınavı gönderildi ({s.Sorular.Count} soru, {s.SureDakika} dk)");
         return Task.CompletedTask;
+        
     }
+    public Task SinavBitirAsync()
+{
+    foreach (var s in _sinavlar.Where(x => x.Durum == "Devam ediyor"))
+        s.Durum = "Bitti";
+    return Task.CompletedTask;
+}
 
         public Task<List<SinavSonucu>> SonuclariGetirAsync(int sinavId)
     {

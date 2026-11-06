@@ -23,6 +23,8 @@ public interface IEgitmenServisi
     // 2. Kişi: Ağ, dağıtım, sonuç, log
     Task<List<BagliOgrenci>> BagliOgrencileriGetirAsync();
     Task SinavGonderAsync(int sinavId);
+
+    Task SinavBitirAsync();
     Task<List<SinavSonucu>> SonuclariGetirAsync(int sinavId);
     Task<List<string>> LogDosyalariGetirAsync();
     Task<string> LogIcerigiGetirAsync(string dosyaAdi);

@@ -129,6 +129,8 @@ public class ApiEgitmenServisi : IEgitmenServisi
 
     public async Task SinavGonderAsync(int sinavId) =>
         await HataVarsaFirlat(await _http.PostAsync($"api/exam/{sinavId}/start", null));
+    public async Task SinavBitirAsync() =>
+    await HataVarsaFirlat(await _http.PostAsync("api/exam/stop", null));
 
     public async Task<List<SinavSonucu>> SonuclariGetirAsync(int sinavId)
     {

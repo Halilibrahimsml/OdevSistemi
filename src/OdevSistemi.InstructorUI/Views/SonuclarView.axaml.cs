@@ -38,6 +38,7 @@ public partial class SonuclarView : UserControl
     private async Task SonuclariYukleAsync()
     {
         if (SinavSecimi.SelectedItem is not Sinav sinav) return;
+        BitirButonu.IsVisible = sinav.Durum == "Devam ediyor";
 
         var sonuclar = (await Servis.Aktif.SonuclariGetirAsync(sinav.Id))
                        .OrderByDescending(s => s.Puan).ToList();
@@ -66,6 +67,21 @@ public partial class SonuclarView : UserControl
     }
 
     private async void Yenile_Click(object? sender, RoutedEventArgs e) => await Calistir(SinavlariYukleAsync);
+    private async void Bitir_Click(object? sender, RoutedEventArgs e) => await Calistir(async () =>
+{
+    if (SinavSecimi.SelectedItem is not Sinav sinav) return;
+
+    var onay = await Diyalog.OnaylaAsync(TopLevel.GetTopLevel(this) as Window,
+        $"'{sinav.Ad}' sınavı şimdi bitirilecek. Henüz teslim etmeyen öğrencilerin " +
+        "ekranı kapanacak ve yeni gönderim kabul edilmeyecek. Onaylıyor musunuz?",
+        "Sınavı Bitir");
+    if (!onay) return;
+
+    await Servis.Aktif.SinavBitirAsync();
+    BitirButonu.IsVisible = false;
+    await SinavlariYukleAsync();
+    DurumMetni.Text = $"'{sinav.Ad}' sınavı bitirildi.";
+});
 
     private async Task Calistir(Func<Task> islem)
     {
