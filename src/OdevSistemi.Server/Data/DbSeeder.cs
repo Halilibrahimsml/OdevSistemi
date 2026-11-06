@@ -20,9 +20,10 @@ public static class DbSeeder
 
         db.Users.AddRange(
             new AppUser { Username = "admin", PasswordHash = PasswordHasher.Hash("admin123"), FullName = "Eğitmen (Yönetici)", Role = UserRole.Instructor },
-            new AppUser { Username = "2024001", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Ali Yılmaz", Role = UserRole.Student, ClassName = "1-A" },
-            new AppUser { Username = "2024002", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Ayşe Demir", Role = UserRole.Student, ClassName = "1-A" },
-            new AppUser { Username = "2024003", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Mehmet Kaya", Role = UserRole.Student, ClassName = "1-B" });
+            new AppUser { Username = "230229035", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Halil İbrahim Şamlı", Role = UserRole.Student, ClassName = "Yazılım-3.sınıf" },
+            new AppUser { Username = "230229060", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Arda Kundak", Role = UserRole.Student, ClassName = "Yazılım-3.sınıf" },
+            new AppUser { Username = "260229090", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Şevval Bayrak", Role = UserRole.Student, ClassName = "Yazılım-4.sınıf" },
+            new AppUser { Username = "240229065", PasswordHash = PasswordHasher.Hash("1234"), FullName = "Berivan Yıldırım", Role = UserRole.Student, ClassName = "Yazılım-3.sınıf" });
 
         db.SaveChanges();
     }

@@ -66,5 +66,14 @@ public class ExamBroadcaster
     {
         int? examId = _session.ActivePayload?.ExamId;
         _session.StopExam();        await _hub.Clients.Group(ExamHub.StudentsGroup).SendAsync(HubEvents.ExamEnded);
+        if (examId is int id)
+{
+    var exam = await _db.Exams.FindAsync(id);
+    if (exam is not null && (exam.EndsAt is null || exam.EndsAt > DateTime.UtcNow))
+    {
+        exam.EndsAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+    }
+}
     }
 }
