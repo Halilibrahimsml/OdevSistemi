@@ -49,7 +49,7 @@ public class ExamControlController : ControllerBase
     [HttpGet("connected")]
     public ActionResult<IReadOnlyList<ConnectedStudentDto>> Connected() => Ok(_session.GetStudents());
 
-    // GET api/exam/5/results  -> Vize İsteri 8 (öğrenci bazında puanlar)
+    // GET api/exam/5/results  (öğrenci bazında puanlar)
     [HttpGet("{examId:int}/results")]
     public async Task<ActionResult<List<ExamResultRowDto>>> Results(int examId)
         => Ok(await _db.Submissions
