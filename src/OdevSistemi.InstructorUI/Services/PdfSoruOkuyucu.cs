@@ -44,8 +44,6 @@ public static class PdfSoruOkuyucu
 
     public static PdfOkumaSonucu Oku(byte[] pdf) => Ayristir(SatirlariOku(pdf));
 
-    // ---------- 1. PDF'i satırlara çevir ----------
-
     private static List<string> SatirlariOku(byte[] pdf)
     {
         var satirlar = new List<string>();
@@ -83,8 +81,6 @@ public static class PdfSoruOkuyucu
     private static string SatiriBirlestir(List<Word> satir) =>
         string.Join(" ", satir.OrderBy(k => k.BoundingBox.Left).Select(k => k.Text));
 
-    // ---------- 2. Satırlardan soruları ve cevapları çıkar ----------
-
     public static PdfOkumaSonucu Ayristir(List<string> hamSatirlar)
     {
         var sonuc = new PdfOkumaSonucu();
@@ -96,7 +92,7 @@ public static class PdfSoruOkuyucu
             return sonuc;
         }
 
-        // a) Cevap anahtarını sorulardan ayır (sondaki başlığı ara)
+        // Cevap anahtarını sorulardan ayır (sondaki başlığı ara)
         int baslik = -1;
         for (int i = satirlar.Count - 1; i >= 0; i--)
         {
@@ -128,7 +124,6 @@ public static class PdfSoruOkuyucu
                                    "ya da cevapları satırlara çift tıklayıp elle girin.");
         }
 
-        // b) Cevapları numaraya göre sözlüğe al
         var cevaplar = new Dictionary<int, string>();
         int? sonNo = null;
         foreach (var s in anahtarSatirlari)
@@ -152,7 +147,7 @@ public static class PdfSoruOkuyucu
             }
         }
 
-        // c) Soruları numaralarına göre böl (1, 2, 3... sırayla gitmeli)
+        //Soruları numaralarına göre böl
         var bloklar = new List<Blok>();
         int beklenen = 1;
         foreach (var s in soruSatirlari)
@@ -177,7 +172,7 @@ public static class PdfSoruOkuyucu
             return sonuc;
         }
 
-        // d) Her soru için şıkları ayır ve cevabı eşleştir
+        //Her soru için şıkları ayır ve cevabı eşleştir
         foreach (var b in bloklar)
         {
             var metin = Regex.Replace(string.Join(" ", b.Satirlar), @"\s+", " ").Trim();
