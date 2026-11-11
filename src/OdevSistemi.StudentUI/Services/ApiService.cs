@@ -5,13 +5,13 @@ using OdevSistemi.Shared.Dtos;
 
 namespace OdevSistemi.StudentUI;
 
-/// <summary>Status: HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı. Error: sunucunun "message" alanı (varsa).</summary>
+///Status: HTTP durum kodu. 0 = sunucuya hiç ulaşılamadı. Error: sunucunun "message" alanı (varsa).
 public record ApiResult(bool Ok, int Status, string? Error = null);
 
-/// <summary>
+
 /// Sunucuyla HTTP üzerinden konuşur: sadece giriş.
 /// Cevap gönderimi HTTP ile değil, SignalR hub üzerinden yapılır (ExamHubService.SubmitAsync).
-/// </summary>
+
 public class ApiService
 {
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(10) };

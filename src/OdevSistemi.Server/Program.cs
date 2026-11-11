@@ -66,7 +66,7 @@ builder.Services.AddSignalR(o =>
     o.KeepAliveInterval = TimeSpan.FromSeconds(10);
 });
 
-// ---- Ağ, dağıtım, puanlama, log servisleri — 2. kişi ----
+// ---- Ağ, dağıtım, puanlama, log servisleri 
 builder.Services.AddSingleton<ExamSessionManager>();  // bağlı öğrenciler + aktif sınav (bellekte)
 builder.Services.AddSingleton<SubmissionLogger>();    // fiziksel .log dosyası
 builder.Services.AddScoped<GradingService>();

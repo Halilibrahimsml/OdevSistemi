@@ -10,6 +10,7 @@
             <ComboBox x:Name="KategoriFiltresi" Width="200"
                       SelectionChanged="KategoriFiltresi_SelectionChanged"/>
             <Button Content="+ Yeni Soru" Click="YeniSoru_Click"/>
+            <Button Content="PDF'den Aktar" Click="PdfAktar_Click"/>
             <Button Content="Düzenle" Click="Duzenle_Click"/>
             <Button Content="Sil" Click="Sil_Click"/>
         </StackPanel>

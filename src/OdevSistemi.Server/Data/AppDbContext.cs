@@ -5,6 +5,7 @@ namespace OdevSistemi.Server.Data;
 
 /// <summary>
 /// Veritabanının C#'taki karşılığı. Her DbSet bir tablodur.
+/// Hangi sınıfların tablo olacağını söylüyor.
 /// Entity Framework Core, SQL yazmadan bu tablolara veri ekleyip okumamızı sağlar.
 /// </summary>
 public class AppDbContext : DbContext
@@ -19,9 +20,10 @@ public class AppDbContext : DbContext
     public DbSet<SubmissionAnswer> SubmissionAnswers => Set<SubmissionAnswer>();
     public DbSet<SystemLog> SystemLogs => Set<SystemLog>();
 
+    //kuralların yazıldığı yer
     protected override void OnModelCreating(ModelBuilder b)
     {
-        // Aynı kullanıcı adı iki kez kaydedilemez (büyük/küçük harf fark etmez).
+        // (büyük/küçük harf fark etmez).Aynı kullanıcı adı iki kez kaydedilemez 
         b.Entity<AppUser>().Property(u => u.Username).UseCollation("NOCASE");
         b.Entity<AppUser>().HasIndex(u => u.Username).IsUnique();
 

@@ -36,13 +36,11 @@ public class ExamBroadcaster
 
         var start = DateTime.UtcNow;
         var end = start.AddMinutes(exam.DurationMinutes); // bitiş saati SUNUCUDA hesaplanır
-
-        // Veritabanına da yaz: sınav listesinde "Devam ediyor" görünsün, başlamış sınav düzenlenemesin.
+ 
         exam.StartedAt = start;
         exam.EndsAt = end;
         await _db.SaveChangesAsync();
 
-        // ÖNEMLİ: CorrectAnswer burada KOPYALANMIYOR -> öğrenciye hiç gitmiyor.
         var questions = exam.Questions
             .OrderBy(eq => eq.OrderNo)
             .Select(eq => new StudentQuestionDto(
@@ -57,7 +55,7 @@ public class ExamBroadcaster
         var payload = new StudentExamDto(exam.Id, exam.Title, start, end, questions);
         _session.StartExam(payload);
 
-        // "Students" grubundaki herkese tek çağrıda gönder (eş zamanlı dağıtım)
+        // "Students" grubundaki herkese tek çağrıda gönder 
         await _hub.Clients.Group(ExamHub.StudentsGroup).SendAsync(HubEvents.ReceiveExam, payload);
         return payload;
     }
