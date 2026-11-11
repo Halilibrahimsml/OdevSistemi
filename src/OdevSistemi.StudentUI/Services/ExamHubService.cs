@@ -5,11 +5,11 @@ using OdevSistemi.Shared.Contracts;
 
 namespace OdevSistemi.StudentUI;
 
-/// <summary>
+
 /// SignalR (ExamHub) bağlantısı: öğrenciyi sunucuya kaydeder, sınav paketini yakalar,
 /// cevapları gönderir ve bağlantı durumunu bildirir.
 /// Adres ve metot adları OdevSistemi.Shared'dan gelir (ServerInfo, HubEvents, HubMethods).
-/// </summary>
+
 public class ExamHubService
 {
     private HubConnection? _conn;
@@ -18,7 +18,7 @@ public class ExamHubService
 
     public event Action<ExamPackage>? ExamReceived;
     public event Action? ExamEnded;
-    /// <summary>"connected", "reconnecting" veya "closed"</summary>
+    ///"connected", "reconnecting" veya "closed"
     public event Action<string>? StateChanged;
 
     public async Task ConnectAsync(string baseUrl, string token, int userId, string userName)
@@ -64,11 +64,11 @@ public class ExamHubService
         await conn.InvokeAsync(HubMethods.RegisterStudent);
     }
 
-    /// <summary>
+    
     /// Cevapları hub üzerinden gönderir.
     /// null dönerse sunucuya ulaşılamadı demektir (tekrar denenebilir).
     /// Success=false dönerse sunucu gönderimi kesin olarak reddetti (Message içinde sebep).
-    /// </summary>
+  
     public async Task<SubmitResultDto?> SubmitAsync(SubmitExamDto dto)
     {
         var conn = _conn;
