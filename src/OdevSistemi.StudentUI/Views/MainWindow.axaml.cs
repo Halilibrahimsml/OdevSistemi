@@ -450,7 +450,7 @@ public partial class MainWindow : Window
     private void UpdateProgress() =>
         ExamProgress.Text = $"{_answers.Count} / {Qs.Count} soru cevaplandı";
 
-    // ---------- Önceki / Sonraki / İşaretle ----------
+    // ---------- Önceki / Sonraki / İşaretle ---------
     private void OnPrev(object? sender, RoutedEventArgs e) => GoTo(_current - 1);
     private void OnNext(object? sender, RoutedEventArgs e) => GoTo(_current + 1);
 
