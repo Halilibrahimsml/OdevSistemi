@@ -240,7 +240,7 @@ public partial class MainWindow : Window
         });
     }
 
-    /// <summary>Giriş sonrası: bu öğrenciye ait yarım kalmış sınav yedeği varsa sınavı geri açar.</summary>
+    /// Giriş sonrası: bu öğrenciye ait yarım kalmış sınav yedeği varsa sınavı geri açar.
     private bool TryResume()
     {
         if (_demo) return false;
