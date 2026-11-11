@@ -15,7 +15,7 @@ namespace OdevSistemi.Server.Controllers;
 ///   GET  /api/auth/me     → token sahibinin bilgileri (token gerekli)
 /// </summary>
 [ApiController]
-[Route("api/auth")]
+[Route("api/auth")] //Bu sınıftaki bütün adresler http://IP:5000/api/auth ile başlıyor.
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -26,18 +26,23 @@ public class AuthController : ControllerBase
         _db = db;
         _tokens = tokens;
     }
-
+    //adresine gelen istekleri karşılar
     [HttpPost("login")]
+    
+    //gelen bilgiler (kullanıcı adı, şifre, rol) bu değişkenin içinde.
     public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
-    {
+    {   
+        //Kullanıcı adı ya da şifre boşsa geri gönder: Kullanıcı adı ve şifre gerekli.
         if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrEmpty(request.Password))
             return BadRequest(new { message = "Kullanıcı adı ve şifre gerekli." });
 
         string username = request.Username.Trim();
         string ip = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "";
 
+        //Users tablosunda bu kullanıcı adına sahip kişiyi bul. Yoksa user boş (null) kalır.
         AppUser? user = await _db.Users.FirstOrDefaultAsync(u => u.Username == username);
-
+         
+         //Kişi listede yoksa ya da şifresi yanlışsa
         if (user is null || !PasswordHasher.Verify(request.Password, user.PasswordHash))
         {
             await AddLogAsync("Başarısız giriş denemesi", username, ip);
@@ -53,6 +58,7 @@ public class AuthController : ControllerBase
                 : "Bu uygulamaya sadece öğrenciler giriş yapabilir.";
             return StatusCode(StatusCodes.Status403Forbidden, new { message });
         }
+
 
         var (token, expiresAt) = _tokens.CreateToken(user);
         await AddLogAsync("Giriş yaptı", username, ip);
@@ -90,6 +96,7 @@ public class AuthController : ControllerBase
         ClassName = u.ClassName
     };
 
+    //SystemLogs tablosuna kim, ne zaman, hangi bilgisayardan, ne oldu bilgisini yaz ve kaydet
     private async Task AddLogAsync(string message, string username, string ip)
     {
         _db.SystemLogs.Add(new SystemLog
