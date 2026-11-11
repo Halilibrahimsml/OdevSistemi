@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
+using System.IO;
+using System.Linq;
+using Avalonia.Platform.Storage;
 using Avalonia.Interactivity;
 using OdevSistemi.InstructorUI.Models;
 using OdevSistemi.InstructorUI.Services;
@@ -99,6 +102,65 @@ public partial class SoruBankasiView : UserControl
         await YukleAsync();
         DurumMetni.Text = "Soru silindi.";
     });
+    private async void PdfAktar_Click(object? sender, RoutedEventArgs e) => await Calistir(async () =>
+{
+    if (AnaPencere is null) return;
+
+    var dosyalar = await AnaPencere.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+    {
+        Title = "Soru PDF'ini seçin",
+        AllowMultiple = false,
+        FileTypeFilter = new[] { new FilePickerFileType("PDF dosyası") { Patterns = new[] { "*.pdf" } } }
+    });
+    if (dosyalar.Count == 0) return;
+
+    DurumMetni.Text = "PDF okunuyor...";
+    byte[] icerik;
+    await using (var akis = await dosyalar[0].OpenReadAsync())
+    using (var bellek = new MemoryStream())
+    {
+        await akis.CopyToAsync(bellek);
+        icerik = bellek.ToArray();
+    }
+
+    // Okuma arka planda yapılsın, pencere donmasın
+    var sonuc = await Task.Run(() => PdfSoruOkuyucu.Oku(icerik));
+    if (sonuc.Sorular.Count == 0)
+    {
+        DurumMetni.Text = string.Join(" ", sonuc.Uyarilar);
+        return;
+    }
+
+    var dosyaAdi = System.IO.Path.GetFileNameWithoutExtension(dosyalar[0].Name);
+    var pencere = new PdfIceAktarWindow(dosyaAdi, sonuc, await Servis.Aktif.KategorileriGetirAsync());
+    var eklenecekler = await pencere.ShowDialog<List<Soru>?>(AnaPencere);
+    if (eklenecekler is null || eklenecekler.Count == 0)
+    {
+        DurumMetni.Text = "PDF aktarımı iptal edildi.";
+        return;
+    }
+
+    int basarili = 0;
+    var hatalar = new List<string>();
+    foreach (var soru in eklenecekler)
+    {
+        try
+        {
+            await Servis.Aktif.SoruEkleAsync(soru);
+            basarili++;
+        }
+        catch (Exception ex)
+        {
+            hatalar.Add($"\"{Kisalt(soru.Metin)}\": {ex.Message}");
+        }
+    }
+
+    await YukleAsync();
+    DurumMetni.Text = $"PDF'ten {basarili} soru eklendi." +
+                      (hatalar.Count > 0 ? $" {hatalar.Count} soru eklenemedi: {string.Join("; ", hatalar)}" : "");
+});
+
+private static string Kisalt(string metin) => metin.Length > 40 ? metin[..40] + "..." : metin;
 
     // Sunucu hatası olursa uygulama çökmesin, durum satırında gösterilsin
     private async Task Calistir(Func<Task> islem)
