@@ -22,6 +22,6 @@ public static class AppConfig
     /// </summary>
     public const int AutoSubmitSafetySeconds = 3;
 
-    /// <summary>Gönderimden sonra öğrenciye puanı gösterilsin mi? (Grupça karar verilecek.)</summary>
+    /// <summary>Gönderimden sonra öğrenciye puanı gösterilsin mi? </summary>
     public const bool ShowScore = true;
 }
