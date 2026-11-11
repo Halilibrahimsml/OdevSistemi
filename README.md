@@ -3,10 +3,10 @@
 Yazılım Geliştirme I — 2026-2027 Güz dönemi projesi. C# (.NET 10), ASP.NET Core, SignalR, Avalonia.
 
 
-1.kişi Halil İbrahim Şamlı-230229035
-2.kişi Arda Kundak-230229060
-3.kişi Şevval Bayrak-260229090
-4.kişi Berivan Yıldırım-240229065
+-1.kişi Halil İbrahim Şamlı-230229035
+-2.kişi Arda Kundak-230229060
+-3.kişi Şevval Bayrak-260229090
+-4.kişi Berivan Yıldırım-240229065
 ## Projeler
 
 | Klasör | Ne | Sorumlu |
