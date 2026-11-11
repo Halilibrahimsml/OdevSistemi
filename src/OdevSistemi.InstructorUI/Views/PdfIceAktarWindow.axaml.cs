@@ -13,7 +13,7 @@ public partial class PdfIceAktarWindow : Window
     private readonly List<string> _uyarilar;
     private readonly List<string> _kategoriler;
 
-    public PdfIceAktarWindow() : this("", new PdfOkumaSonucu(), new List<string>()) { } // tasarımcı için
+    public PdfIceAktarWindow() : this("", new PdfOkumaSonucu(), new List<string>()) { }
 
     public PdfIceAktarWindow(string dosyaAdi, PdfOkumaSonucu sonuc, List<string> kategoriler)
     {

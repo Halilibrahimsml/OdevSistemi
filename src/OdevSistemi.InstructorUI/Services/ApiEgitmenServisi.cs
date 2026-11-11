@@ -23,8 +23,6 @@ public class ApiEgitmenServisi : IEgitmenServisi
         _http = new HttpClient { BaseAddress = new Uri(sunucuAdresi), Timeout = TimeSpan.FromSeconds(10) };
     }
 
-    // ---------------- Giriş (1. kişi) ----------------
-
     public async Task<bool> GirisYapAsync(string kullaniciAdi, string sifre)
     {
         var istek = new LoginRequest
@@ -46,7 +44,6 @@ public class ApiEgitmenServisi : IEgitmenServisi
         return true;
     }
 
-    // ---------------- Soru bankası (1. kişi) ----------------
 
     public Task<List<string>> KategorileriGetirAsync() =>
         GetAsync<List<string>>("api/questions/categories");
@@ -67,7 +64,6 @@ public class ApiEgitmenServisi : IEgitmenServisi
     public async Task SoruSilAsync(int id) =>
         await HataVarsaFirlat(await _http.DeleteAsync($"api/questions/{id}"));
 
-    // ---------------- Sınav kaydı (1. kişi) ----------------
 
     public async Task<Sinav> SinavOlusturAsync(Sinav sinav)
     {
@@ -112,8 +108,6 @@ public class ApiEgitmenServisi : IEgitmenServisi
             OlusturmaTarihi = YerelSaat(e.CreatedAt)
         }).ToList();
     }
-
-    // ---------------- Ağ, dağıtım, sonuç, log (2. kişi) ----------------
 
     public async Task<List<BagliOgrenci>> BagliOgrencileriGetirAsync()
     {

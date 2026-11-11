@@ -14,7 +14,7 @@ public partial class SoruFormWindow : Window
     private RadioButton[] Dogrular => new[] { DogruA, DogruB, DogruC, DogruD };
     private TextBox[] Secenekler => new[] { SecenekA, SecenekB, SecenekC, SecenekD };
 
-    public SoruFormWindow() : this(null, new List<string>()) { } // tasarımcı için
+    public SoruFormWindow() : this(null, new List<string>()) { }
 
     public SoruFormWindow(Soru? soru, List<string> kategoriler)
     {
